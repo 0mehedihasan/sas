@@ -43,14 +43,13 @@ if (isset($_POST['save'])) {
     $result = $stmt->get_result();
 
     $sampPass = "pass123";
-    $sampPass_2 = md5($sampPass);
 
     if ($result->num_rows > 0) {
       $statusMsg = "<div class='alert alert-danger'>This Email Address Already Exists!</div>";
     } else {
       // Insert new class teacher
       $stmt = $selectedConn->prepare("INSERT INTO tblclassteacher (firstName, lastName, emailAddress, password, phoneNo, classId, dateCreated) VALUES (?, ?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("sssssis", $firstName, $lastName, $emailAddress, $sampPass_2, $phoneNo, $classId, $dateCreated);
+      $stmt->bind_param("sssssis", $firstName, $lastName, $emailAddress, $sampPass, $phoneNo, $classId, $dateCreated);
       if ($stmt->execute()) {
         $statusMsg = "<div class='alert alert-success'>Created Successfully!</div>";
       } else {

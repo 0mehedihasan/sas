@@ -7,15 +7,20 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password']; // Use plain text for testing
 
+
+    
     // Determine which database connection to use
     $dbName = $userType == "Administrator" ? "sas_six" : "sas_seven"; // Update according to your actual DB names
     $dbConnection = $conn[$dbName];
+
+    $dbName1 = $userType == "ClassTeacher" ? "sas_six" : "sas_seven"; // Update according to your actual DB names
+    $dbConnection1 = $conn[$dbName1];
 
     // Prepare query based on user type
     if ($userType == "Administrator") {
         $query = $dbConnection->prepare("SELECT * FROM tbladmin WHERE emailAddress = ?");
     } else if ($userType == "ClassTeacher") {
-        $query = $dbConnection->prepare("SELECT * FROM tblclassteacher WHERE emailAddress = ?");
+        $query = $dbConnection1->prepare("SELECT * FROM tblclassteacher WHERE emailAddress = ?");
     } else {
         echo "<div class='alert alert-danger' role='alert'>Invalid User Role!</div>";
         exit;

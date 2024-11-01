@@ -38,8 +38,9 @@ if(isset($_POST['save'])){
     if ($result->num_rows > 0) {
       $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>This Admission Number Already Exists!</div>";
     } else {
-      $query = $selectedConn->prepare("INSERT INTO tblstudents (firstName, lastName, otherName, admissionNumber, password, classId, dateCreated) VALUES (?, ?, ?, ?, '12345', ?, ?)");
-      $query->bind_param("ssssss", $firstName, $lastName, $otherName, $admissionNumber, $classId, $dateCreated);
+      $query = $selectedConn->prepare("INSERT INTO tblstudents (firstName, lastName, otherName, admissionNumber, password, classId, dateCreated) VALUES (?, ?, ?, ?, ?, ?, ?)");
+      $password = '12345'; // Plain text password
+      $query->bind_param("sssssss", $firstName, $lastName, $otherName, $admissionNumber, $password, $classId, $dateCreated);
 
       if ($query->execute()) {
         $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Created Successfully!</div>";
@@ -73,8 +74,9 @@ if (isset($_GET['Id']) && isset($_GET['action']) && $_GET['action'] == "edit") {
       $classId = $_POST['classId'];
       $dateCreated = date("Y-m-d");
 
-      $query = $conn[$dbKey]->prepare("UPDATE tblstudents SET firstName = ?, lastName = ?, otherName = ?, admissionNumber = ?, password = '12345', classId = ? WHERE Id = ?");
-      $query->bind_param("sssssi", $firstName, $lastName, $otherName, $admissionNumber, $classId, $Id);
+      $query = $conn[$dbKey]->prepare("UPDATE tblstudents SET firstName = ?, lastName = ?, otherName = ?, admissionNumber = ?, password = ?, classId = ? WHERE Id = ?");
+      $password = '12345'; // Plain text password
+      $query->bind_param("ssssssi", $firstName, $lastName, $otherName, $admissionNumber, $password, $classId, $Id);
 
       if ($query->execute()) {
         echo "<script type='text/javascript'>window.location = ('createStudents.php')</script>";
