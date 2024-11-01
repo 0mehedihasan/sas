@@ -27,7 +27,6 @@ $allData = [];
 foreach ($dbs as $dbName) {
   $students = fetchData($conn, $dbName, 'tblstudents');
   $classes = fetchData($conn, $dbName, 'tblclass');
-  $classArms = fetchData($conn, $dbName, 'tblclassarms');
   $attendance = fetchData($conn, $dbName, 'tblattendance');
   $classTeachers = fetchData($conn, $dbName, 'tblclassteacher');
   $sessTerm = fetchData($conn, $dbName, 'tblsessionterm');
@@ -37,7 +36,6 @@ foreach ($dbs as $dbName) {
   $allData[$dbName] = [
     'students' => count($students),
     'classes' => count($classes),
-    'classArms' => count($classArms),
     'attendance' => count($attendance),
     'classTeachers' => count($classTeachers),
     'sessTerm' => count($sessTerm),
@@ -122,28 +120,6 @@ foreach ($dbs as $dbName) {
           </div>
           <div class="col-auto">
             <i class="fas fa-chalkboard fa-2x text-primary"></i>
-          </div>
-          </div>
-        </div>
-        </div>
-      </div>
-      <!-- Class Arm Card -->
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-          <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase mb-1">Class Arms</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
-            <?php 
-            // Display total class arms across all databases
-            $totalClassArms = array_sum(array_column($allData, 'classArms'));
-            echo $totalClassArms;
-            ?>
-            </div>
-          </div>
-          <div class="col-auto">
-            <i class="fas fa-code-branch fa-2x text-success"></i>
           </div>
           </div>
         </div>
