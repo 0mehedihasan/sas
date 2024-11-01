@@ -34,47 +34,6 @@ foreach ($databases as $dbKey) {
     $allClasses[] = $row;
   }
 }
-
-//------------------------SAVE--------------------------------------------------
-if (isset($_POST['save'])) {
-  $firstName = $_POST['firstName'];
-  $lastName = $_POST['lastName'];
-  $emailAddress = $_POST['emailAddress'];
-  $phoneNo = $_POST['phoneNo'];
-  $classId = $_POST['classId'];
-  $dateCreated = date("Y-m-d");
-  $dbKey = $_POST['dbKey']; // Get the dbKey from the form
-
-  // Check if the dbKey is set and valid
-  if (isset($conn[$dbKey])) {
-    $selectedConn = $conn[$dbKey]; // Initialize the selected connection
-
-    // Check for existing email address
-    $stmt = $selectedConn->prepare("SELECT * FROM tblclassteacher WHERE emailAddress = ?");
-    $stmt->bind_param("s", $emailAddress);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $sampPass = "pass123";
-
-    if ($result->num_rows > 0) {
-      $statusMsg = "<div class='alert alert-danger'>This Email Address Already Exists!</div>";
-    } else {
-      // Insert new class teacher
-      $stmt = $selectedConn->prepare("INSERT INTO tblclassteacher (firstName, lastName, emailAddress, password, phoneNo, classId, dateCreated) VALUES (?, ?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("sssssis", $firstName, $lastName, $emailAddress, $sampPass, $phoneNo, $classId, $dateCreated);
-      if ($stmt->execute()) {
-        $statusMsg = "<div class='alert alert-success'>Created Successfully!</div>";
-      } else {
-        $statusMsg = "<div class='alert alert-danger'>An error Occurred: " . $stmt->error . "</div>"; // Show the error
-      }
-    }
-    $stmt->close();
-  } else {
-    $statusMsg = "<div class='alert alert-danger'>Invalid database selection.</div>";
-  }
-}
-
 $query = "SELECT tblclass.className 
 FROM tblclassteacher
 INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
