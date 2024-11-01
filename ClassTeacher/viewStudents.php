@@ -1,5 +1,6 @@
 <?php 
 error_reporting(0);
+session_start();
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
@@ -20,15 +21,14 @@ foreach ($dbs as $db) {
   }
 }
 
-$query = "SELECT tblclass.className, tblclassarms.classArmName 
+$query = "SELECT tblclass.className 
     FROM tblclassteacher
     INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-    INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId
     WHERE tblclassteacher.Id = '$_SESSION[userId]'";
 
 $rs = $conn['sas_six']->query($query); // Assuming the session userId is in sas_six database
 $num = $rs->num_rows;
-$rrw = $rs->fetch_assoc() ?? ['className' => '', 'classArmName' => ''];
+$rrw = $rs->fetch_assoc() ?? ['className' => ''];
 
 ?>
 
@@ -62,7 +62,7 @@ $rrw = $rs->fetch_assoc() ?? ['className' => '', 'classArmName' => ''];
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">All Student in (<?php echo $rrw['className'].' - '.$rrw['classArmName'];?>) Class</h1>
+            <h1 class="h3 mb-0 text-gray-800">All Student in (<?php echo $rrw['className'];?>) Class</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="./">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">All Student in Class</li>
@@ -90,38 +90,45 @@ $rrw = $rs->fetch_assoc() ?? ['className' => '', 'classArmName' => ''];
                             <th>Other Name</th>
                             <th>Admission No</th>
                             <th>Class</th>
-                            <th>Class Arm</th>
                           </tr>
                         </thead>
                         
                         <tbody>
                           <?php
-                          $query = "SELECT tblstudents.Id, tblclass.className, tblclassarms.classArmName, tblclassarms.Id AS classArmId, tblstudents.firstName,
-                          tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber, tblstudents.dateCreated
-                          FROM tblstudents
-                          INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                          INNER JOIN tblclassarms ON tblclassarms.Id = tblstudents.classArmId
-                          WHERE tblstudents.classId = '$_SESSION[classId]' AND tblstudents.classArmId = '$_SESSION[classArmId]'";
-                          
-                          $rs = $conn['sas_six']->query($query); // Assuming the session classId and classArmId are in sas_six database
-                          $num = $rs->num_rows;
-                          $sn = 0;
-                          if($num > 0) { 
-                            while ($rows = $rs->fetch_assoc()) {
-                              $sn++;
+                          if (isset($_SESSION['classId'])) {
+                            $query = "SELECT tblstudents.Id, tblclass.className, tblstudents.firstName,
+                            tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber, tblstudents.dateCreated
+                            FROM tblstudents
+                            INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
+                            WHERE tblstudents.classId = '$_SESSION[classId]'";
+                                                      
+                            $rs = $conn['sas_six']->query($query); // Assuming the session classId is in sas_six database
+                            $num = $rs->num_rows;
+                            $sn = 0;
+                            if($num > 0) { 
+                              while ($rows = $rs->fetch_assoc()) {
+                                $sn++;
+                                echo "
+                                  <tr>
+                                    <td>".$sn."</td>
+                                    <td>".$rows['firstName']."</td>
+                                    <td>".$rows['lastName']."</td>
+                                    <td>".$rows['otherName']."</td>
+                                    <td>".$rows['admissionNumber']."</td>
+                                    <td>".$rows['className']."</td>
+                                  </tr>";
+                              }
+                            } else {
                               echo "
                                 <tr>
-                                  <td>".$sn."</td>
-                                  <td>".$rows['firstName']."</td>
-                                  <td>".$rows['lastName']."</td>
-                                  <td>".$rows['otherName']."</td>
-                                  <td>".$rows['admissionNumber']."</td>
-                                  <td>".$rows['className']."</td>
-                                  <td>".$rows['classArmName']."</td>
+                                  <td colspan='6' class='text-center'>No Record Found!</td>
                                 </tr>";
                             }
                           } else {
-                            echo "<div class='alert alert-danger' role='alert'>No Record Found!</div>";
+                            echo "
+                              <tr>
+                                <td colspan='6' class='text-center'>Session variables not set!</td>
+                              </tr>";
                           }
                           ?>
                         </tbody>
