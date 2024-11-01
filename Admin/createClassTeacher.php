@@ -258,81 +258,76 @@ function updateDbKey() {
                     ?>
                   </form>
                 </div>
-              </div>
+                </div>
 
-              <!-- Input Group -->
+                <!-- Input Group -->
                  <div class="row">
-              <div class="col-lg-12">
-              <div class="card mb-4">
+                <div class="col-lg-12">
+                <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">All Class Teachers</h6>
                 </div>
                 <div class="table-responsive p-3">
                   <table class="table align-items-center table-flush table-hover" id="dataTableHover">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email Address</th>
-                        <th>Phone No</th>
-                        <th>Class</th>
-                        <th>Class Arm</th>
-                        <th>Date Created</th>
-                        <th>Delete</th>
-                      </tr>
-                    </thead>
+                  <thead class="thead-light">
+                  <tr>
+                  <th>#</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email Address</th>
+                  <th>Phone No</th>
+                  <th>Class</th>
+                  <th>Class Arm</th>
+                  <th>Date Created</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                  </tr>
+                  </thead>
                    
-                    <tbody>
+                  <tbody>
 
                   <?php
+                  $sn = 0;
                   foreach ($databases as $dbKey) {
-                      $query = "SELECT tblclassteacher.Id, tblclass.className, tblclassarms.classArmName, tblclassarms.Id AS classArmId, tblclassteacher.firstName,
-                      tblclassteacher.lastName, tblclassteacher.emailAddress, tblclassteacher.phoneNo, tblclassteacher.dateCreated
-                      FROM tblclassteacher
-                      INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-                      INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId";
-                      $rs = $conn[$dbKey]->query($query);
-                      $num = $rs->num_rows;
-                      $sn=0;
-                      $status="";
-                      if($num > 0)
-                      { 
-                        while ($rows = $rs->fetch_assoc())
-                          {
-                             $sn = $sn + 1;
-                            echo"
-                              <tr>
-                                <td>".$sn."</td>
-                                <td>".$rows['firstName']."</td>
-                                <td>".$rows['lastName']."</td>
-                                <td>".$rows['emailAddress']."</td>
-                                <td>".$rows['phoneNo']."</td>
-                                <td>".$rows['className']."</td>
-                                <td>".$rows['classArmName']."</td>
-                                 <td>".$rows['dateCreated']."</td>
-                                <td><a href='?action=delete&Id=".$rows['Id']."&classArmId=".$rows['classArmId']."&dbKey=".$dbKey."'><i class='fas fa-fw fa-trash'></i></a></td>
-                              </tr>";
-                          }
-                      }
-                      else
-                      {
-                           echo   
-                           "<div class='alert alert-danger' role='alert'>
-                            No Record Found!
-                            </div>";
-                      }
+                  $query = "SELECT tblclassteacher.Id, tblclass.className, tblclassarms.classArmName, tblclassarms.Id AS classArmId, tblclassteacher.firstName,
+                  tblclassteacher.lastName, tblclassteacher.emailAddress, tblclassteacher.phoneNo, tblclassteacher.dateCreated
+                  FROM tblclassteacher
+                  INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+                  INNER JOIN tblclassarms ON tblclassarms.Id = tblclassteacher.classArmId";
+                  $rs = $conn[$dbKey]->query($query);
+                  if ($rs->num_rows > 0) {
+                    while ($rows = $rs->fetch_assoc()) {
+                    $sn++;
+                    echo "
+                    <tr>
+                    <td>$sn</td>
+                    <td>{$rows['firstName']}</td>
+                    <td>{$rows['lastName']}</td>
+                    <td>{$rows['emailAddress']}</td>
+                    <td>{$rows['phoneNo']}</td>
+                    <td>{$rows['className']}</td>
+                    <td>{$rows['classArmName']}</td>
+                    <td>{$rows['dateCreated']}</td>
+                    <td><a href='?action=edit&Id={$rows['Id']}&dbKey=$dbKey'><i class='fas fa-fw fa-edit'></i>Edit</a></td>
+                    <td><a href='?action=delete&Id={$rows['Id']}&classArmId={$rows['classArmId']}&dbKey=$dbKey'><i class='fas fa-fw fa-trash'></i>Delete</a></td>
+                    </tr>";
+                    }
+                  } else {
+                    echo "<tr><td colspan='10' class='text-center'>No Record Found in $dbKey!</td></tr>";
                   }
-                      
-                      ?>
-                    </tbody>
+                  }
+                  if ($sn == 0) {
+                  echo "<tr><td colspan='10' class='text-center'>No Record Found!</td></tr>";
+                  }
+                  ?>
+                  </tbody>
                   </table>
                 </div>
-              </div>
-            </div>
-            </div>
-          </div>
-          <!--Row-->
+                </div>
+                </div>
+                </div>
+                </div>
+                <!--Row-->
 
           <!-- Documentation Link -->
           <!-- <div class="row">
