@@ -1,10 +1,34 @@
-
 <?php 
 error_reporting(0);
+session_start();
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
+// Define the database connection variables
+$host = 'localhost:5222';
+$user = 'root';
+$pass = '';
 
+// Define the databases
+$dbs = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
+
+// Define the database connections
+$conn = [];
+foreach ($dbs as $db) {
+  $conn[$db] = new mysqli($host, $user, $pass, $db);
+  if ($conn[$db]->connect_error) {
+    die("Connection failed: " . $conn[$db]->connect_error);
+  }
+}
+
+$query = "SELECT tblclass.className 
+    FROM tblclassteacher
+    INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+    WHERE tblclassteacher.Id = '$_SESSION[userId]'";
+
+$rs = $conn['sas_six']->query($query); // Assuming the session userId is in sas_six database
+$num = $rs->num_rows;
+$rrw = $rs->fetch_assoc() ?? ['className' => ''];
 
 ?>
 
@@ -60,10 +84,6 @@ include '../Includes/session.php';
                         <label class="form-control-label">Select Date<span class="text-danger ml-2">*</span></label>
                             <input type="date" class="form-control" name="dateTaken" id="exampleInputFirstName" placeholder="Class Arm Name">
                         </div>
-                        <!-- <div class="col-xl-6">
-                        <label class="form-control-label">Class Arm Name<span class="text-danger ml-2">*</span></label>
-                      <input type="text" class="form-control" name="classArmName" value="<?php echo $row['classArmName'];?>" id="exampleInputFirstName" placeholder="Class Arm Name">
-                        </div> -->
                     </div>
                     <button type="submit" name="view" class="btn btn-primary">View Attendance</button>
                   </form>
@@ -113,7 +133,7 @@ include '../Includes/session.php';
                       INNER JOIN tblterm ON tblterm.Id = tblsessionterm.termId
                       INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
                       where tblattendance.dateTimeTaken = '$dateTaken' and tblattendance.classId = '$_SESSION[classId]' and tblattendance.classArmId = '$_SESSION[classArmId]'";
-                      $rs = $conn->query($query);
+                      $rs = $conn['sas_six']->query($query); // Assuming the session classId is in sas_six database
                       $num = $rs->num_rows;
                       $sn=0;
                       $status="";
@@ -156,17 +176,6 @@ include '../Includes/session.php';
             </div>
           </div>
           <!--Row-->
-
-          <!-- Documentation Link -->
-          <!-- <div class="row">
-            <div class="col-lg-12 text-center">
-              <p>For more documentations you can visit<a href="https://getbootstrap.com/docs/4.3/components/forms/"
-                  target="_blank">
-                  bootstrap forms documentations.</a> and <a
-                  href="https://getbootstrap.com/docs/4.3/components/input-group/" target="_blank">bootstrap input
-                  groups documentations</a></p>
-            </div>
-          </div> -->
 
         </div>
         <!---Container Fluid-->
