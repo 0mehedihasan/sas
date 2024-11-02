@@ -34,14 +34,21 @@ foreach ($databases as $dbKey) {
     $allClasses[] = $row;
   }
 }
-$query = "SELECT tblclass.className 
-FROM tblclassteacher
-INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-WHERE tblclassteacher.Id = '$_SESSION[userId]'";
 
-$rs = $conn['sas_six']->query($query); // Assuming the session userId is in sas_six database
-$num = $rs->num_rows;
-$rrw = $rs->fetch_assoc() ?? ['className' => ''];
+// Fetch class name for the class teacher from multiple databases
+$rrw = ['className' => ''];
+foreach ($databases as $dbKey) {
+  $query = "SELECT tblclass.className 
+            FROM tblclassteacher
+            INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+            WHERE tblclassteacher.Id = '$_SESSION[userId]'";
+  $rs = $conn[$dbKey]->query($query);
+  if ($rs && $rs->num_rows > 0) {
+    $rrw = $rs->fetch_assoc();
+    break;
+  }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -83,25 +90,23 @@ $rrw = $rs->fetch_assoc() ?? ['className' => ''];
           <div class="row mb-3">
             <!-- New User Card Example -->
             <?php
-            $classId = $_SESSION['classId'] ?? null;
-            if (!$classId) {
+            $students = 0;
+            foreach ($databases as $dbKey) {
+              $classId = null;
               $query = "SELECT classId FROM tblclassteacher WHERE Id = '$_SESSION[userId]'";
-              $result = $conn['sas_six']->query($query);
-              if ($result->num_rows > 0) {
+              $result = $conn[$dbKey]->query($query);
+              if ($result && $result->num_rows > 0) {
                 $row = $result->fetch_assoc();
                 $classId = $row['classId'];
-                $_SESSION['classId'] = $classId;
               }
-            }
-            if ($classId) {
-              $query1 = $conn['sas_six']->prepare("SELECT * FROM tblstudents WHERE classId = ?");
-              $query1->bind_param("i", $classId);
-              $query1->execute();
-              $result = $query1->get_result();
-              $students = $result->num_rows;
-              $query1->close();
-            } else {
-              $students = 0;
+              if ($classId) {
+                $query1 = $conn[$dbKey]->prepare("SELECT * FROM tblstudents WHERE classId = ?");
+                $query1->bind_param("i", $classId);
+                $query1->execute();
+                $result = $query1->get_result();
+                $students += $result->num_rows;
+                $query1->close();
+              }
             }
             ?>
             <div class="col-xl-3 col-md-6 mb-4">
@@ -125,8 +130,11 @@ $rrw = $rs->fetch_assoc() ?? ['className' => ''];
             </div>
             <!-- Earnings (Monthly) Card Example -->
             <?php
-            $query1 = mysqli_query($conn['sas_six'], "SELECT * from tblclass");
-            $class = mysqli_num_rows($query1);
+            $class = 0;
+            foreach ($databases as $dbKey) {
+              $query1 = mysqli_query($conn[$dbKey], "SELECT * from tblclass");
+              $class += mysqli_num_rows($query1);
+            }
             ?>
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100">
@@ -149,8 +157,11 @@ $rrw = $rs->fetch_assoc() ?? ['className' => ''];
             </div>
             <!-- Earnings (Annual) Card Example -->
             <?php
-            $query1 = mysqli_query($conn['sas_six'], "SELECT * from tblattendance WHERE classId = '$classId'");
-            $totAttendance = mysqli_num_rows($query1);
+            $totAttendance = 0;
+            foreach ($databases as $dbKey) {
+              $query1 = mysqli_query($conn[$dbKey], "SELECT * from tblattendance WHERE classId = '$classId'");
+              $totAttendance += mysqli_num_rows($query1);
+            }
             ?>
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card h-100">
