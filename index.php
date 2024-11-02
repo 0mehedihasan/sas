@@ -1,62 +1,100 @@
-<?php 
+<?php
 include 'Includes/dbcon.php';
 session_start();
+
+// Define the database connection variables
+$host = 'localhost:5222';
+$user = 'root';
+$pass = '';
+
+// Define the databases
+$dbs = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
+$conn = [];
+
+// Create database connections
+foreach ($dbs as $db) {
+    $conn[$db] = new mysqli($host, $user, $pass, $db);
+    if ($conn[$db]->connect_error) {
+        die("Connection failed: " . $conn[$db]->connect_error);
+    }
+}
 
 if (isset($_POST['login'])) {
     $userType = $_POST['userType'];
     $username = $_POST['username'];
     $password = $_POST['password']; // Use plain text for testing
 
-
-    
-    // Determine which database connection to use
-    $dbName = $userType == "Administrator" ? "sas_six" : "sas_seven"; // Update according to your actual DB names
-    $dbConnection = $conn[$dbName];
-
-    $dbName1 = $userType == "ClassTeacher" ? "sas_six" : "sas_seven"; // Update according to your actual DB names
-    $dbConnection1 = $conn[$dbName1];
-
     // Prepare query based on user type
     if ($userType == "Administrator") {
-        $query = $dbConnection->prepare("SELECT * FROM tbladmin WHERE emailAddress = ?");
+        foreach ($dbs as $db) {
+            $dbConnection = $conn[$db];
+            $query = $dbConnection->prepare("SELECT * FROM tbladmin WHERE emailAddress = ?");
+            if ($query) {
+                $query->bind_param("s", $username);
+                $query->execute();
+                $result = $query->get_result();
+
+                if ($result->num_rows > 0) {
+                    $rows = $result->fetch_assoc();
+
+                    // Use password hashing in production
+                    if ($password === $rows['password']) { // Consider using password_verify() here
+                        $_SESSION['userId'] = $rows['Id'];
+                        $_SESSION['firstName'] = $rows['firstName'];
+                        $_SESSION['lastName'] = $rows['lastName'];
+                        $_SESSION['emailAddress'] = $rows['emailAddress'];
+
+                        // Redirect based on user type
+                        $redirectLocation = "Admin/index.php";
+                        echo "<script type='text/javascript'>window.location = ('$redirectLocation')</script>";
+                        exit;
+                    } else {
+                        echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
+                    }
+                }
+                $query->close();
+            }
+        }
     } else if ($userType == "ClassTeacher") {
-        $query = $dbConnection1->prepare("SELECT * FROM tblclassteacher WHERE emailAddress = ?");
+        foreach ($dbs as $db) {
+            $dbConnection = $conn[$db];
+            $query = $dbConnection->prepare("SELECT * FROM tblclassteacher WHERE emailAddress = ?");
+            if ($query) {
+                $query->bind_param("s", $username);
+                $query->execute();
+                $result = $query->get_result();
+
+                if ($result->num_rows > 0) {
+                    $rows = $result->fetch_assoc();
+
+                    // Use password hashing in production
+                    if ($password === $rows['password']) { // Consider using password_verify() here
+                        $_SESSION['userId'] = $rows['Id'];
+                        $_SESSION['firstName'] = $rows['firstName'];
+                        $_SESSION['lastName'] = $rows['lastName'];
+                        $_SESSION['emailAddress'] = $rows['emailAddress'];
+
+                        // Redirect based on user type
+                        $redirectLocation = "ClassTeacher/index.php";
+                        echo "<script type='text/javascript'>window.location = ('$redirectLocation')</script>";
+                        exit;
+                    } else {
+                        echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
+                    }
+                }
+                $query->close();
+            }
+        }
+        echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
     } else {
         echo "<div class='alert alert-danger' role='alert'>Invalid User Role!</div>";
-        exit;
     }
-
-    // Execute query
-    $query->bind_param("s", $username);
-    $query->execute();
-    $result = $query->get_result();
-
-    if ($result->num_rows > 0) {
-        $rows = $result->fetch_assoc();
-
-        // Use password hashing in production
-        if ($password === $rows['password']) { // Consider using password_verify() here
-            $_SESSION['userId'] = $rows['Id'];
-            $_SESSION['firstName'] = $rows['firstName'];
-            $_SESSION['lastName'] = $rows['lastName'];
-            $_SESSION['emailAddress'] = $rows['emailAddress'];
-
-            // Redirect based on user type
-            $redirectLocation = $userType == "Administrator" ? "Admin/index.php" : "ClassTeacher/index.php";
-            echo "<script type='text/javascript'>window.location = ('$redirectLocation')</script>";
-        } else {
-            echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
-        }
-    } else {
-        echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
-    }
-
-    $query->close(); // Close the prepared statement
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -67,6 +105,7 @@ if (isset($_POST['login'])) {
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/ruang-admin.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gradient-login" style="background-image: url('img/logo/loral1.jpe00g');">
     <div class="container-login">
         <div class="row justify-content-center">
@@ -114,4 +153,5 @@ if (isset($_POST['login'])) {
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/ruang-admin.min.js"></script>
 </body>
+
 </html>
