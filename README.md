@@ -25,97 +25,62 @@ A distributed database-based School Attendance Management System designed to man
 
 The main project files are stored in the `htdocs` folder of XAMPP, and the system connects to the correct database depending on the login credentials.
 
-## Setup and Installation
+## Multi-Database Setup
 
-### Prerequisites
+### How It Works
 
-- [XAMPP](https://www.apachefriends.org/index.html) (to run Apache and MySQL locally)
-- PHP 7.4+
-- MySQL
-- Composer (for dependency management)
+The project is designed to handle multiple databases to manage different grade levels separately. This approach helps in organizing data efficiently and allows for better scalability. Here’s how it works:
 
-### Installation Steps
+1. **Database Connections**:
+   - The project defines multiple databases (`sas_six`, `sas_seven`, `sas_eight`, `sas_other`) for different grade levels.
+   - Each database connection is established at the beginning of the script using a loop that iterates through the list of databases.
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/0mehedihasan/sas.git
-   ```
+2. **Dynamic Database Selection**:
+   - Depending on the class or grade level, the system dynamically selects the appropriate database connection.
+   - For example, when creating a new class or taking attendance, the system determines which database to use based on the class name or other criteria.
 
-2. **Move Files to XAMPP Directory**:
-   Copy the project folder to `xampp/htdocs`.
+3. **Session Management**:
+   - User sessions are managed to ensure that the correct database is accessed based on the logged-in user's role and class assignment.
+   - The session variables store user information, including the user ID and class ID, which are used to fetch data from the correct database.
 
-3. **Configure Database Connections**:
-   Open `config.php` in the project root and set the database details for each distributed database.
+4. **Data Fetching and Insertion**:
+   - Queries are executed on the selected database connection to fetch or insert data.
+   - For example, when a teacher logs in, the system fetches the class information from the appropriate database based on the teacher's assigned class.
 
-   Example:
-   ```php
-   <?php
-   function getDatabaseConnection($dbname) {
-       $host = "localhost";
-       $username = "root";
-       $password = "";
-       try {
-           $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-           $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-           return $conn;
-       } catch (PDOException $e) {
-           echo "Connection failed: " . $e->getMessage();
-       }
-   }
-   ```
+### Example Code Snippet
 
-4. **Import Databases**:
-   Import the SQL files for each database (`sas_six`, `sas_seven`, `sas_eight`, `sas_other`) in PHPMyAdmin to set up the initial structure.
+Here’s an example of how the project dynamically selects the database connection:
 
-5. **Install PhpSpreadsheet**:
-   Navigate to the project directory and install PhpSpreadsheet for exporting attendance data to Excel:
-   ```bash
-   composer require phpoffice/phpspreadsheet
-   ```
+```php
+// Define the database connection variables
+$host = 'localhost:5222';
+$user = 'root';
+$pass = '';
 
-6. **Start XAMPP**:
-   Launch XAMPP and start Apache and MySQL.
+// Define the databases
+$dbs = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
 
-7. **Access the Project**:
-   Open your browser and navigate to:
-   ```
-   http://localhost/school-attendance-management-system
-   ```
+// Define the database connections
+$conn = [];
+foreach ($dbs as $db) {
+  $conn[$db] = new mysqli($host, $user, $pass, $db);
+  if ($conn[$db]->connect_error) {
+    die("Connection failed for $db: " . $conn[$db]->connect_error);
+  }
+}
 
-## Usage
-
-1. **Admin Login**:
-   The admin can log in to manage classes, teachers, and students.
-
-2. **Teacher Login**:
-   Teachers can log in to take attendance, view records, and download attendance as Excel files.
-
-3. **Attendance Export**:
-   Teachers can download attendance records by selecting the download option, which generates an Excel file of the attendance data.
-
-## Folder Structure
-
-```
-school-attendance-management-system/
-├── config.php          # Database configuration file
-├── index.php           # Login page
-├── admin/              # Admin dashboard and functionality
-├── teacher/            # Teacher dashboard and functionality
-├── assets/             # CSS, JavaScript, and image files
-└── attendance_export/  # Scripts for Excel export
-```
-
-## Contributing
-
-Contributions are welcome! If you’d like to improve or add new features to this project, feel free to submit a pull request. Please make sure to update tests as appropriate.
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Acknowledgments
-
-- PhpSpreadsheet - For generating Excel files
-- IEEE Resources - Guidance on best practices in database management
-
-This structured README should provide clarity for anyone who wants to understand, set up, or contribute to your project on GitHub.
+// Fetch class name for the class teacher from multiple databases
+$rrw = ['className' => ''];
+$classId = null;
+foreach ($dbs as $dbKey) {
+  $query = "SELECT tblclass.className, tblclassteacher.classId 
+            FROM tblclassteacher
+            INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+            WHERE tblclassteacher.Id = '".$_SESSION['userId']."'";
+  $rs = $conn[$dbKey]->query($query);
+  if ($rs && $rs->num_rows > 0) {
+    $rrw = $rs->fetch_assoc();
+    $classId = $rrw['classId'];
+    break;
+  }
+}
