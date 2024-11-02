@@ -24,48 +24,86 @@ foreach ($dbs as $db) {
   }
 }
 
-// Ensure session variables are set
-if (!isset($_SESSION['userId']) || !isset($_SESSION['classId'])) {
-  die("Session variables not set. Please log in again.");
+$statusMsg = ""; // Initialize the status message variable
+
+// Fetch class name for the class teacher from multiple databases
+$rrw = ['className' => ''];
+$classId = null;
+foreach ($dbs as $dbKey) {
+  $query = "SELECT tblclass.className, tblclassteacher.classId 
+            FROM tblclassteacher
+            INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+            WHERE tblclassteacher.Id = '".$_SESSION['userId']."'";
+  $rs = $conn[$dbKey]->query($query);
+  if ($rs && $rs->num_rows > 0) {
+    $rrw = $rs->fetch_assoc();
+    $classId = $rrw['classId'];
+    break;
+  }
 }
 
-// Query to get the class name for the logged-in user
-$query = "SELECT tblclass.className 
-          FROM tblclassteacher
-          INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-          WHERE tblclassteacher.Id = '{$_SESSION['userId']}'";
-$rs = $conn['sas_six']->query($query); // Assuming the session userId is in sas_six database
-
-if (!$rs) {
-  die("Query failed: " . $conn['sas_six']->error);
+//session and Term
+$sessionTermId = null;
+foreach ($dbs as $dbKey) {
+  $query = $conn[$dbKey]->query("SELECT * FROM tblsessionterm WHERE isActive ='1'");
+  if ($query && $query->num_rows > 0) {
+    $rwws = $query->fetch_assoc();
+    $sessionTermId = $rwws['Id'];
+    break;
+  }
 }
 
-if ($rs->num_rows == 0) {
-  die("No class found for the logged-in user.");
-}
-
-$classData = $rs->fetch_assoc();
-$className = $classData['className'] ?? '';
-
-// Date taken for attendance
 $dateTaken = date("Y-m-d");
 
-// Check if attendance record exists for today
-$qurty = $conn['sas_six']->query("SELECT * FROM tblattendance WHERE classId = '{$_SESSION['classId']}' AND dateTimeTaken='$dateTaken'");
-
-if (!$qurty) {
-  die("Query failed: " . $conn['sas_six']->error);
-}
-
-if ($qurty->num_rows == 0) {
-  // Insert attendance records if none exist for today
-  $qus = $conn['sas_six']->query("SELECT * FROM tblstudents WHERE classId = '{$_SESSION['classId']}'");
-  if (!$qus) {
-    die("Query failed: " . $conn['sas_six']->error);
+if ($classId) {
+  $dbKey = null;
+  foreach ($dbs as $key => $db) {
+    $query = "SELECT Id FROM tblclass WHERE Id = '$classId'";
+    $result = $conn[$db]->query($query);
+    if ($result && $result->num_rows > 0) {
+      $dbKey = $db;
+      break;
+    }
   }
-  while ($student = $qus->fetch_assoc()) {
-    $conn['sas_six']->query("INSERT INTO tblattendance(admissionNo, classId, status, dateTimeTaken) 
-                             VALUES('{$student['admissionNumber']}', '{$_SESSION['classId']}', '0', '$dateTaken')");
+  $query = "SELECT * FROM tblattendance WHERE classId = '$classId' AND dateTimeTaken='$dateTaken'";
+  $qurty = $conn[$dbKey]->query($query);
+  $count = $qurty->num_rows;
+
+  if ($count == 0) { //if Record does not exist, insert the new record
+    //insert the students record into the attendance table on page load
+    $query = "SELECT * FROM tblstudents WHERE classId = '$classId'";
+    $qus = $conn[$dbKey]->query($query);
+    while ($ros = $qus->fetch_assoc()) {
+      $query = "INSERT INTO tblattendance(admissionNo, classId, sessionTermId, status, dateTimeTaken) 
+                VALUES('".$ros['admissionNumber']."', '$classId', '$sessionTermId', '0', '$dateTaken')";
+      $conn[$dbKey]->query($query);
+    }
+  }
+
+  if (isset($_POST['save'])) {
+    $admissionNo = $_POST['admissionNo'];
+    $check = $_POST['check'];
+    $N = count($admissionNo);
+
+    //check if the attendance has not been taken i.e if no record has a status of 1
+    $query = "SELECT * FROM tblattendance WHERE classId = '$classId' AND dateTimeTaken='$dateTaken' AND status = '1'";
+    $qurty = $conn[$dbKey]->query($query);
+    $count = $qurty->num_rows;
+
+    if ($count > 0) {
+      $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Attendance has been taken for today!</div>";
+    } else { //update the status to 1 for the checkboxes checked
+      for ($i = 0; $i < $N; $i++) {
+        if (isset($check[$i])) { //the checked checkboxes
+          $query = "UPDATE tblattendance SET status='1' WHERE admissionNo = '".$check[$i]."'";
+          if ($conn[$dbKey]->query($query)) {
+            $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Attendance Taken Successfully!</div>";
+          } else {
+            $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
+          }
+        }
+      }
+    }
   }
 }
 
@@ -78,11 +116,11 @@ if (isset($_POST['view'])) {
             FROM tblattendance
             INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
             INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-            WHERE tblattendance.dateTimeTaken = '$dateTaken' AND tblattendance.classId = '{$_SESSION['classId']}'";
-  $rs = $conn['sas_six']->query($query);
+            WHERE tblattendance.dateTimeTaken = '$dateTaken' AND tblattendance.classId = '$classId'";
+  $rs = $conn[$dbKey]->query($query);
 
   if (!$rs) {
-    die("Query failed: " . $conn['sas_six']->error);
+    die("Query failed: " . $conn[$dbKey]->error);
   }
 
   $attendanceRecords = $rs->fetch_all(MYSQLI_ASSOC);
