@@ -64,24 +64,5 @@
       </div>
     </div>
   </li>
-
-  <hr class="sidebar-divider">
-  <div class="sidebar-heading">
-    Session & Term
-  </div>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrapcon" aria-expanded="true" aria-controls="collapseBootstrapcon">
-      <i class="fa fa-calendar-alt"></i>
-      <span>Manage Session & Term</span>
-    </a>
-    <div id="collapseBootstrapcon" class="collapse" aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
-      <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Contribution</h6>
-        <a class="collapse-item" href="createSessionTerm.php">Create Session and Term</a>
-        <!-- <a class="collapse-item" href="addMemberToContLevel.php ">Add Member to Level</a> -->
-      </div>
-    </div>
-  </li>
   <hr class="sidebar-divider">
 </ul>

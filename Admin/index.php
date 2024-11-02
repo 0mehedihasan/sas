@@ -29,17 +29,13 @@ foreach ($dbs as $dbName) {
   $classes = fetchData($conn, $dbName, 'tblclass');
   $attendance = fetchData($conn, $dbName, 'tblattendance');
   $classTeachers = fetchData($conn, $dbName, 'tblclassteacher');
-  $sessTerm = fetchData($conn, $dbName, 'tblsessionterm');
-  $terms = fetchData($conn, $dbName, 'tblterm');
 
   // Store the counts
   $allData[$dbName] = [
     'students' => count($students),
     'classes' => count($classes),
     'attendance' => count($attendance),
-    'classTeachers' => count($classTeachers),
-    'sessTerm' => count($sessTerm),
-    'terms' => count($terms)
+    'classTeachers' => count($classTeachers)
   ];
 }
 
@@ -164,50 +160,6 @@ foreach ($dbs as $dbName) {
           </div>
           <div class="col-auto">
             <i class="fas fa-chalkboard-teacher fa-2x text-danger"></i>
-          </div>
-          </div>
-        </div>
-        </div>
-      </div>
-      <!-- Session and Terms Card -->
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-          <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase mb-1">Session & Terms</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
-            <?php 
-            // Display total sessions and terms across all databases
-            $totalSessTerm = array_sum(array_column($allData, 'sessTerm'));
-            echo $totalSessTerm;
-            ?>
-            </div>
-          </div>
-          <div class="col-auto">
-            <i class="fas fa-calendar-alt fa-2x text-warning"></i>
-          </div>
-          </div>
-        </div>
-        </div>
-      </div>
-      <!-- Terms Card -->
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card h-100">
-        <div class="card-body">
-          <div class="row no-gutters align-items-center">
-          <div class="col mr-2">
-            <div class="text-xs font-weight-bold text-uppercase mb-1">Terms</div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
-            <?php 
-            // Display total terms across all databases
-            $totalTerms = array_sum(array_column($allData, 'terms'));
-            echo $totalTerms;
-            ?>
-            </div>
-          </div>
-          <div class="col-auto">
-            <i class="fas fa-clipboard-list fa-2x text-primary"></i>
           </div>
           </div>
         </div>
