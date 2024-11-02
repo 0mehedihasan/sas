@@ -1,5 +1,4 @@
 <?php 
-error_reporting(0);
 session_start();
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
@@ -21,54 +20,83 @@ foreach ($dbs as $db) {
   }
 }
 
-$query = "SELECT tblclass.className 
-    FROM tblclassteacher
-    INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-    WHERE tblclassteacher.Id = '$_SESSION[userId]'";
+$statusMsg = ""; // Initialize the status message variable
 
-$rs = $conn['sas_six']->query($query); // Assuming the session userId is in sas_six database
-$num = $rs->num_rows;
-$rrw = $rs->fetch_assoc() ?? ['className' => ''];
-
-//session and Term
-$querey = $conn['sas_six']->query("SELECT * FROM tblsessionterm WHERE isActive ='1'");
-$rwws = $querey->fetch_assoc();
-$sessionTermId = $rwws['Id'];
-
-$dateTaken = date("Y-m-d");
-
-$qurty = $conn['sas_six']->query("SELECT * FROM tblattendance WHERE classId = '$_SESSION[classId]' AND dateTimeTaken='$dateTaken'");
-$count = $qurty->num_rows;
-
-if ($count == 0) { //if Record does not exist, insert the new record
-  //insert the students record into the attendance table on page load
-  $qus = $conn['sas_six']->query("SELECT * FROM tblstudents WHERE classId = '$_SESSION[classId]'");
-  while ($ros = $qus->fetch_assoc()) {
-    $qquery = $conn['sas_six']->query("INSERT INTO tblattendance(admissionNo, classId, sessionTermId, status, dateTimeTaken) 
-    VALUES('$ros[admissionNumber]', '$_SESSION[classId]', '$sessionTermId', '0', '$dateTaken')");
+// Fetch class name for the class teacher from multiple databases
+$rrw = ['className' => ''];
+$classId = null;
+foreach ($dbs as $dbKey) {
+  $query = "SELECT tblclass.className, tblclassteacher.classId 
+            FROM tblclassteacher
+            INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+            WHERE tblclassteacher.Id = '".$_SESSION['userId']."'";
+  $rs = $conn[$dbKey]->query($query);
+  if ($rs && $rs->num_rows > 0) {
+    $rrw = $rs->fetch_assoc();
+    $classId = $rrw['classId'];
+    break;
   }
 }
 
-if (isset($_POST['save'])) {
-  $admissionNo = $_POST['admissionNo'];
-  $check = $_POST['check'];
-  $N = count($admissionNo);
-  $status = "";
+//session and Term
+$sessionTermId = null;
+foreach ($dbs as $dbKey) {
+  $query = $conn[$dbKey]->query("SELECT * FROM tblsessionterm WHERE isActive ='1'");
+  if ($query && $query->num_rows > 0) {
+    $rwws = $query->fetch_assoc();
+    $sessionTermId = $rwws['Id'];
+    break;
+  }
+}
 
-  //check if the attendance has not been taken i.e if no record has a status of 1
-  $qurty = $conn['sas_six']->query("SELECT * FROM tblattendance WHERE classId = '$_SESSION[classId]' AND dateTimeTaken='$dateTaken' AND status = '1'");
+$dateTaken = date("Y-m-d");
+
+if ($classId) {
+  $dbKey = null;
+  foreach ($dbs as $key => $db) {
+    $query = "SELECT Id FROM tblclass WHERE Id = '$classId'";
+    $result = $conn[$db]->query($query);
+    if ($result && $result->num_rows > 0) {
+      $dbKey = $db;
+      break;
+    }
+  }
+  $query = "SELECT * FROM tblattendance WHERE classId = '$classId' AND dateTimeTaken='$dateTaken'";
+  $qurty = $conn[$dbKey]->query($query);
   $count = $qurty->num_rows;
 
-  if ($count > 0) {
-    $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Attendance has been taken for today!</div>";
-  } else { //update the status to 1 for the checkboxes checked
-    for ($i = 0; $i < $N; $i++) {
-      if (isset($check[$i])) { //the checked checkboxes
-        $qquery = $conn['sas_six']->query("UPDATE tblattendance SET status='1' WHERE admissionNo = '$check[$i]'");
-        if ($qquery) {
-          $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Attendance Taken Successfully!</div>";
-        } else {
-          $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
+  if ($count == 0) { //if Record does not exist, insert the new record
+    //insert the students record into the attendance table on page load
+    $query = "SELECT * FROM tblstudents WHERE classId = '$classId'";
+    $qus = $conn[$dbKey]->query($query);
+    while ($ros = $qus->fetch_assoc()) {
+      $query = "INSERT INTO tblattendance(admissionNo, classId, sessionTermId, status, dateTimeTaken) 
+                VALUES('".$ros['admissionNumber']."', '$classId', '$sessionTermId', '0', '$dateTaken')";
+      $conn[$dbKey]->query($query);
+    }
+  }
+
+  if (isset($_POST['save'])) {
+    $admissionNo = $_POST['admissionNo'];
+    $check = $_POST['check'];
+    $N = count($admissionNo);
+
+    //check if the attendance has not been taken i.e if no record has a status of 1
+    $query = "SELECT * FROM tblattendance WHERE classId = '$classId' AND dateTimeTaken='$dateTaken' AND status = '1'";
+    $qurty = $conn[$dbKey]->query($query);
+    $count = $qurty->num_rows;
+
+    if ($count > 0) {
+      $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>Attendance has been taken for today!</div>";
+    } else { //update the status to 1 for the checkboxes checked
+      for ($i = 0; $i < $N; $i++) {
+        if (isset($check[$i])) { //the checked checkboxes
+          $query = "UPDATE tblattendance SET status='1' WHERE admissionNo = '".$check[$i]."'";
+          if ($conn[$dbKey]->query($query)) {
+            $statusMsg = "<div class='alert alert-success' style='margin-right:700px;'>Attendance Taken Successfully!</div>";
+          } else {
+            $statusMsg = "<div class='alert alert-danger' style='margin-right:700px;'>An error Occurred!</div>";
+          }
         }
       }
     }
@@ -143,14 +171,13 @@ if (isset($_POST['save'])) {
                           
                           <tbody>
                             <?php
-                            if (isset($_SESSION['classId'])) {
                               $query = "SELECT tblstudents.Id, tblstudents.admissionNumber, tblclass.className, tblclass.Id AS classId, tblstudents.firstName,
                               tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber, tblstudents.dateCreated
                               FROM tblstudents
                               INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                              WHERE tblstudents.classId = '$_SESSION[classId]'";
+                              WHERE tblstudents.classId = '$classId'";
                               
-                              $rs = $conn['sas_six']->query($query); // Assuming the session classId is in sas_six database
+                              $rs = $conn[$dbKey]->query($query);
                               $num = $rs->num_rows;
                               $sn = 0;
                               if ($num > 0) { 
@@ -174,12 +201,6 @@ if (isset($_POST['save'])) {
                                     <td colspan='7' class='text-center'>No Record Found!</td>
                                   </tr>";
                               }
-                            } else {
-                              echo "
-                                <tr>
-                                  <td colspan='7' class='text-center'>Session variables not set!</td>
-                                </tr>";
-                            }
                             ?>
                           </tbody>
                         </table>
@@ -198,7 +219,7 @@ if (isset($_POST['save'])) {
         <!---Container Fluid-->
       </div>
       <!-- Footer -->
-       <?php include "Includes/footer.php";?>
+      <?php include "Includes/footer.php";?>
       <!-- Footer -->
     </div>
   </div>
@@ -212,17 +233,6 @@ if (isset($_POST['save'])) {
   <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="js/ruang-admin.min.js"></script>
-  <!-- Page level plugins -->
-  <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-  <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-  <!-- Page level custom scripts -->
-  <script>
-    $(document).ready(function () {
-      $('#dataTable').DataTable(); // ID From dataTable 
-      $('#dataTableHover').DataTable(); // ID From dataTable with Hover
-    });
-  </script>
 </body>
 
 </html>
