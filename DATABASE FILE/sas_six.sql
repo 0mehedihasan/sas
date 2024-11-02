@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 06, 2022 at 09:57 PM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 8.0.1
+-- Host: localhost:5222
+-- Generation Time: Nov 02, 2024 at 08:22 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `attendancemsystem`
+-- Database: `sas_six`
 --
 
 -- --------------------------------------------------------
@@ -33,14 +33,15 @@ CREATE TABLE `tbladmin` (
   `lastName` varchar(50) NOT NULL,
   `emailAddress` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tbladmin`
 --
 
 INSERT INTO `tbladmin` (`Id`, `firstName`, `lastName`, `emailAddress`, `password`) VALUES
-(1, 'Admin', '', 'admin@mail.com', 'D00F5D5217896FB7FD601412CB890830');
+(1, 'Super', 'Admin', 'super@admin', 'admin'),
+(2, 'Admin', 'SAS Six', 'admin@six', 'admin');
 
 -- --------------------------------------------------------
 
@@ -56,50 +57,42 @@ CREATE TABLE `tblattendance` (
   `sessionTermId` varchar(10) NOT NULL,
   `status` varchar(10) NOT NULL,
   `dateTimeTaken` varchar(20) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblattendance`
 --
 
 INSERT INTO `tblattendance` (`Id`, `admissionNo`, `classId`, `classArmId`, `sessionTermId`, `status`, `dateTimeTaken`) VALUES
-(162, 'ASDFLKJ', '1', '2', '1', '1', '2020-11-01'),
-(163, 'HSKSDD', '1', '2', '1', '1', '2020-11-01'),
-(164, 'JSLDKJ', '1', '2', '1', '1', '2020-11-01'),
-(172, 'HSKDS9EE', '1', '4', '1', '1', '2020-11-01'),
-(171, 'JKADA', '1', '4', '1', '0', '2020-11-01'),
-(170, 'JSFSKDJ', '1', '4', '1', '1', '2020-11-01'),
-(173, 'ASDFLKJ', '1', '2', '1', '1', '2020-11-19'),
-(174, 'HSKSDD', '1', '2', '1', '1', '2020-11-19'),
-(175, 'JSLDKJ', '1', '2', '1', '1', '2020-11-19'),
-(176, 'JSFSKDJ', '1', '4', '1', '0', '2021-07-15'),
-(177, 'JKADA', '1', '4', '1', '0', '2021-07-15'),
-(178, 'HSKDS9EE', '1', '4', '1', '0', '2021-07-15'),
-(179, 'ASDFLKJ', '1', '2', '1', '0', '2021-09-27'),
-(180, 'HSKSDD', '1', '2', '1', '1', '2021-09-27'),
-(181, 'JSLDKJ', '1', '2', '1', '1', '2021-09-27'),
-(182, 'ASDFLKJ', '1', '2', '1', '0', '2021-10-06'),
-(183, 'HSKSDD', '1', '2', '1', '0', '2021-10-06'),
-(184, 'JSLDKJ', '1', '2', '1', '1', '2021-10-06'),
-(185, 'ASDFLKJ', '1', '2', '1', '0', '2021-10-07'),
-(186, 'HSKSDD', '1', '2', '1', '0', '2021-10-07'),
-(187, 'JSLDKJ', '1', '2', '1', '0', '2021-10-07'),
-(188, 'AMS110', '4', '6', '1', '1', '2021-10-07'),
-(189, 'AMS133', '4', '6', '1', '0', '2021-10-07'),
-(190, 'AMS135', '4', '6', '1', '0', '2021-10-07'),
-(191, 'AMS144', '4', '6', '1', '1', '2021-10-07'),
-(192, 'AMS148', '4', '6', '1', '0', '2021-10-07'),
-(193, 'AMS151', '4', '6', '1', '1', '2021-10-07'),
-(194, 'AMS159', '4', '6', '1', '1', '2021-10-07'),
-(195, 'AMS161', '4', '6', '1', '1', '2021-10-07'),
-(196, 'AMS110', '4', '6', '1', '1', '2022-06-06'),
-(197, 'AMS133', '4', '6', '1', '0', '2022-06-06'),
-(198, 'AMS135', '4', '6', '1', '0', '2022-06-06'),
-(199, 'AMS144', '4', '6', '1', '1', '2022-06-06'),
-(200, 'AMS148', '4', '6', '1', '0', '2022-06-06'),
-(201, 'AMS151', '4', '6', '1', '1', '2022-06-06'),
-(202, 'AMS159', '4', '6', '1', '1', '2022-06-06'),
-(203, 'AMS161', '4', '6', '1', '1', '2022-06-06');
+(251, '20240029', '15', '', '', '0', '2024-11-02'),
+(250, '20240028', '15', '', '', '0', '2024-11-02'),
+(249, '20240027', '15', '', '', '0', '2024-11-02'),
+(248, '20240026', '15', '', '', '0', '2024-11-02'),
+(247, '20240025', '15', '', '', '0', '2024-11-02'),
+(246, '20240024', '15', '', '', '0', '2024-11-02'),
+(245, '20240023', '15', '', '', '0', '2024-11-02'),
+(244, '20240022', '15', '', '', '0', '2024-11-02'),
+(243, '20240021', '15', '', '', '0', '2024-11-02'),
+(242, '20240020', '15', '', '', '0', '2024-11-02'),
+(241, '20240019', '15', '', '', '0', '2024-11-02'),
+(240, '20240018', '15', '', '', '0', '2024-11-02'),
+(239, '20240017', '15', '', '', '0', '2024-11-02'),
+(238, '20240016', '15', '', '', '0', '2024-11-02'),
+(237, '20240015', '15', '', '', '0', '2024-11-02'),
+(236, '20240014', '15', '', '', '0', '2024-11-02'),
+(235, '20240013', '15', '', '', '0', '2024-11-02'),
+(234, '20240012', '15', '', '', '0', '2024-11-02'),
+(233, '20240011', '15', '', '', '0', '2024-11-02'),
+(232, '20240010', '15', '', '', '0', '2024-11-02'),
+(231, '20240009', '15', '', '', '0', '2024-11-02'),
+(230, '20240008', '15', '', '', '0', '2024-11-02'),
+(229, '20240007', '15', '', '', '0', '2024-11-02'),
+(228, '20240006', '15', '', '', '0', '2024-11-02'),
+(227, '20240005', '15', '', '', '0', '2024-11-02'),
+(226, '20240004', '15', '', '', '0', '2024-11-02'),
+(225, '20240003', '15', '', '', '0', '2024-11-02'),
+(224, '20240001', '15', '', '', '0', '2024-11-02'),
+(223, '20240002', '15', '', '', '0', '2024-11-02');
 
 -- --------------------------------------------------------
 
@@ -110,16 +103,14 @@ INSERT INTO `tblattendance` (`Id`, `admissionNo`, `classId`, `classArmId`, `sess
 CREATE TABLE `tblclass` (
   `Id` int(10) NOT NULL,
   `className` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblclass`
 --
 
 INSERT INTO `tblclass` (`Id`, `className`) VALUES
-(1, 'Seven'),
-(3, 'Eight'),
-(4, 'Nine');
+(15, '6');
 
 -- --------------------------------------------------------
 
@@ -132,17 +123,7 @@ CREATE TABLE `tblclassarms` (
   `classId` varchar(10) NOT NULL,
   `classArmName` varchar(255) NOT NULL,
   `isAssigned` varchar(10) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `tblclassarms`
---
-
-INSERT INTO `tblclassarms` (`Id`, `classId`, `classArmName`, `isAssigned`) VALUES
-(2, '1', 'S1', '1'),
-(4, '1', 'S2', '1'),
-(5, '3', 'E1', '1'),
-(6, '4', 'N1', '1');
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -160,17 +141,14 @@ CREATE TABLE `tblclassteacher` (
   `classId` varchar(10) NOT NULL,
   `classArmId` varchar(10) NOT NULL,
   `dateCreated` varchar(50) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblclassteacher`
 --
 
 INSERT INTO `tblclassteacher` (`Id`, `firstName`, `lastName`, `emailAddress`, `password`, `phoneNo`, `classId`, `classArmId`, `dateCreated`) VALUES
-(1, 'Will', 'Kibagendi', 'teacher2@mail.com', '32250170a0dca92d53ec9624f336ca24', '09089898999', '1', '2', '2022-10-31'),
-(4, 'Demola', 'Ade', 'teacher3@gmail.com', '32250170a0dca92d53ec9624f336ca24', '09672002882', '1', '4', '2022-11-01'),
-(5, 'Ryan', 'Mbeche', 'teacher4@mail.com', '32250170a0dca92d53ec9624f336ca24', '7014560000', '3', '5', '2022-10-07'),
-(6, 'John', 'Keroche', 'teacher@mail.com', '32250170a0dca92d53ec9624f336ca24', '0100000030', '4', '6', '2022-10-07');
+(13, 'Class 6', 'Teacher', 'class@six', 'pass123', '01715123456', '15', '', '2024-11-02');
 
 -- --------------------------------------------------------
 
@@ -184,15 +162,7 @@ CREATE TABLE `tblsessionterm` (
   `termId` varchar(50) NOT NULL,
   `isActive` varchar(10) NOT NULL,
   `dateCreated` varchar(50) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `tblsessionterm`
---
-
-INSERT INTO `tblsessionterm` (`Id`, `sessionName`, `termId`, `isActive`, `dateCreated`) VALUES
-(1, '2021/2022', '1', '1', '2022-10-31'),
-(3, '2021/2022', '2', '0', '2022-10-31');
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -210,29 +180,42 @@ CREATE TABLE `tblstudents` (
   `classId` varchar(10) NOT NULL,
   `classArmId` varchar(10) NOT NULL,
   `dateCreated` varchar(50) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tblstudents`
 --
 
 INSERT INTO `tblstudents` (`Id`, `firstName`, `lastName`, `otherName`, `admissionNumber`, `password`, `classId`, `classArmId`, `dateCreated`) VALUES
-(1, 'Thomas', 'Omari', 'none', 'AMS005', '12345', '1', '2', '2022-10-31'),
-(3, 'Samuel', 'Ondieki', 'none', 'AMS007', '12345', '1', '2', '2022-10-31'),
-(4, 'Milagros', 'Oloo', 'none', 'AMS011', '12345', '1', '2', '2022-10-31'),
-(5, 'Luis', 'Ayo', 'none', 'AMS012', '12345', '1', '4', '2022-10-31'),
-(6, 'Sandra', 'Sagero', 'none', 'AMS015', '12345', '1', '4', '2022-10-31'),
-(7, 'Smith', 'Makori', 'Mack', 'AMS017', '12345', '1', '4', '2022-10-31'),
-(8, 'Juliana', 'Kerubo', 'none', 'AMS019', '12345', '3', '5', '2022-10-31'),
-(9, 'Richard', 'Semo', 'none', 'AMS021', '12345', '3', '5', '2022-10-31'),
-(10, 'Jon', 'Mbeeka', 'none', 'AMS110', '12345', '4', '6', '2022-10-07'),
-(11, 'Aida', 'Moraa', 'none', 'AMS133', '12345', '4', '6', '2022-10-07'),
-(12, 'Miguel', 'Bush', 'none', 'AMS135', '12345', '4', '6', '2022-10-07'),
-(13, 'Sergio', 'Hammons', 'none', 'AMS144', '12345', '4', '6', '2022-10-07'),
-(14, 'Lyn', 'Rogers', 'none', 'AMS148', '12345', '4', '6', '2022-10-07'),
-(15, 'James', 'Dominick', 'none', 'AMS151', '12345', '4', '6', '2022-10-07'),
-(16, 'Ethel', 'Quin', 'none', 'AMS159', '12345', '4', '6', '2022-10-07'),
-(17, 'Roland', 'Estrada', 'none', 'AMS161', '12345', '4', '6', '2022-10-07');
+(23, 'Farhana', 'Islam', 'Sultana', '20240002', '12345', '15', '', '2024-11-02'),
+(22, 'Arafat', 'Rahman', 'Kabir', '20240001', '12345', '15', '', '2024-11-02'),
+(25, 'Ruhul', 'Kuddus', 'Sami', '20240003', '12345', '15', '', '2024-11-02'),
+(20240004, 'Mithun', 'Sarker', 'Raihan', '20240004', '12345', '15', '', '2024-11-02'),
+(20240005, 'Puja', 'Das', 'Aditi', '20240005', '12345', '15', '', '2024-11-02'),
+(20240006, 'Shanto', 'Chowdhury', 'Tanvir', '20240006', '12345', '15', '', '2024-11-02'),
+(20240007, 'Nabila', 'Ahmed', 'Mimi', '20240007', '12345', '15', '', '2024-11-02'),
+(20240008, 'Sadiq', 'Hossain', 'Samiul', '20240008', '12345', '15', '', '2024-11-02'),
+(20240009, 'Farhana', 'Begum', 'Nila', '20240009', '12345', '15', '', '2024-11-02'),
+(20240010, 'Ratul', 'Khan', 'Bappi', '20240010', '12345', '15', '', '2024-11-02'),
+(20240011, 'Khalid', 'Islam', 'Rashid', '20240011', '12345', '15', '', '2024-11-02'),
+(20240012, 'Sabrina', 'Rahman', 'Nilu', '20240012', '12345', '15', '', '2024-11-02'),
+(20240013, 'Jewel', 'Miah', 'Tuhin', '20240013', '12345', '15', '', '2024-11-02'),
+(20240014, 'Sumaiya', 'Zaman', 'Lima', '20240014', '12345', '15', '', '2024-11-02'),
+(20240015, 'Imran', 'Alam', 'Fahim', '20240015', '12345', '15', '', '2024-11-02'),
+(20240016, 'Riya', 'Sultana', 'Rupa', '20240016', '12345', '15', '', '2024-11-02'),
+(20240017, 'Shahriar', 'Chowdhury', 'Shaan', '20240017', '12345', '15', '', '2024-11-02'),
+(20240018, 'Anika', 'Tariq', 'Samiha', '20240018', '12345', '15', '', '2024-11-02'),
+(20240019, 'Feroz', 'Hoque', 'Rafi', '20240019', '12345', '15', '', '2024-11-02'),
+(20240020, 'Tamanna', 'Khan', 'Maya', '20240020', '12345', '15', '', '2024-11-02'),
+(20240021, 'Sakib', 'Uddin', 'Nabil', '20240021', '12345', '15', '', '2024-11-02'),
+(20240022, 'Kashif', 'Hossain', 'Riyad', '20240022', '12345', '15', '', '2024-11-02'),
+(20240023, 'Rumi', 'Rahman', 'Nipa', '20240023', '12345', '15', '', '2024-11-02'),
+(20240024, 'Zahir', 'Islam', 'Bobby', '20240024', '12345', '15', '', '2024-11-02'),
+(20240025, 'Nafisa', 'Akter', 'Rumi', '20240025', '12345', '15', '', '2024-11-02'),
+(20240026, 'Roni', 'Chowdhury', 'Arif', '20240026', '12345', '15', '', '2024-11-02'),
+(20240027, 'Lina', 'Begum', 'Piya', '20240027', '12345', '15', '', '2024-11-02'),
+(20240028, 'Raihan', 'Shah', 'Samir', '20240028', '12345', '15', '', '2024-11-02'),
+(20240029, 'Tisha', 'Mia', 'Soma', '20240029', '12345', '15', '', '2024-11-02');
 
 -- --------------------------------------------------------
 
@@ -243,16 +226,7 @@ INSERT INTO `tblstudents` (`Id`, `firstName`, `lastName`, `otherName`, `admissio
 CREATE TABLE `tblterm` (
   `Id` int(10) NOT NULL,
   `termName` varchar(20) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `tblterm`
---
-
-INSERT INTO `tblterm` (`Id`, `termName`) VALUES
-(1, 'First'),
-(2, 'Second'),
-(3, 'Third');
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Indexes for dumped tables
@@ -314,31 +288,31 @@ ALTER TABLE `tblterm`
 -- AUTO_INCREMENT for table `tbladmin`
 --
 ALTER TABLE `tbladmin`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tblattendance`
 --
 ALTER TABLE `tblattendance`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=204;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=252;
 
 --
 -- AUTO_INCREMENT for table `tblclass`
 --
 ALTER TABLE `tblclass`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `tblclassarms`
 --
 ALTER TABLE `tblclassarms`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `tblclassteacher`
 --
 ALTER TABLE `tblclassteacher`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `tblsessionterm`
@@ -350,7 +324,7 @@ ALTER TABLE `tblsessionterm`
 -- AUTO_INCREMENT for table `tblstudents`
 --
 ALTER TABLE `tblstudents`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20240030;
 
 --
 -- AUTO_INCREMENT for table `tblterm`
