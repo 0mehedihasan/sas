@@ -21,14 +21,23 @@ foreach ($dbs as $db) {
   }
 }
 
-$query = "SELECT tblclass.className 
-    FROM tblclassteacher
-    INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-    WHERE tblclassteacher.Id = '$_SESSION[userId]'";
+$statusMsg = ""; // Initialize the status message variable
 
-$rs = $conn['sas_six']->query($query); // Assuming the session userId is in sas_six database
-$num = $rs->num_rows;
-$rrw = $rs->fetch_assoc() ?? ['className' => ''];
+// Fetch class name for the class teacher from multiple databases
+$rrw = ['className' => ''];
+$classId = null;
+foreach ($dbs as $dbKey) {
+  $query = "SELECT tblclass.className, tblclassteacher.classId 
+            FROM tblclassteacher
+            INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+            WHERE tblclassteacher.Id = '$_SESSION[userId]'";
+  $rs = $conn[$dbKey]->query($query);
+  if ($rs && $rs->num_rows > 0) {
+    $rrw = $rs->fetch_assoc();
+    $classId = $rrw['classId'];
+    break;
+  }
+}
 
 ?>
 
@@ -95,14 +104,14 @@ $rrw = $rs->fetch_assoc() ?? ['className' => ''];
                         
                         <tbody>
                           <?php
-                          if (isset($_SESSION['classId'])) {
+                          if ($classId) {
                             $query = "SELECT tblstudents.Id, tblclass.className, tblstudents.firstName,
                             tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber, tblstudents.dateCreated
                             FROM tblstudents
                             INNER JOIN tblclass ON tblclass.Id = tblstudents.classId
-                            WHERE tblstudents.classId = '$_SESSION[classId]'";
+                            WHERE tblstudents.classId = '$classId'";
                                                       
-                            $rs = $conn['sas_six']->query($query); // Assuming the session classId is in sas_six database
+                            $rs = $conn[$dbKey]->query($query);
                             $num = $rs->num_rows;
                             $sn = 0;
                             if($num > 0) { 
