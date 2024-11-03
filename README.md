@@ -84,3 +84,6 @@ foreach ($dbs as $dbKey) {
     break;
   }
 }
+```
+XAMPP & MySQL Workbench Clash <br>
+Solution: https://www.youtube.com/watch?v=gxYpitQmais&t=502s&ab_channel=FahimAmin
