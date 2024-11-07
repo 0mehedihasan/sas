@@ -2,30 +2,35 @@
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
-// Function to get the correct database connection based on user ID
-function getDatabaseConnection($conn, $userId) {
-  $databases = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
-  foreach ($databases as $dbKey) {
-    $query = "SELECT * FROM tblclassteacher WHERE Id = $userId";
-    $result = $conn[$dbKey]->query($query);
-    if ($result && $result->num_rows > 0) {
-      return $conn[$dbKey];
+// Function to get the correct database connection based on admission number
+function getDatabaseConnection($conn, $admissionNumber) {
+    $databases = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
+    foreach ($databases as $dbKey) {
+        $query = "SELECT * FROM tblstudents WHERE admissionNumber = '$admissionNumber'";
+        $result = $conn[$dbKey]->query($query);
+        if ($result && $result->num_rows > 0) {
+            return $conn[$dbKey];
+        }
     }
-  }
-  return null;
+    return null;
 }
 
-$userId = $_SESSION['userId'];
-$selectedConn = getDatabaseConnection($conn, $userId);
+// Check if admissionNumber is set in the session
+if (isset($_SESSION['admissionNumber'])) {
+    $admissionNumber = $_SESSION['admissionNumber'];
+    $selectedConn = getDatabaseConnection($conn, $admissionNumber);
 
-if ($selectedConn) {
-  $query = "SELECT * FROM tblclassteacher WHERE Id = $userId";
-  $rs = $selectedConn->query($query);
-  $num = $rs->num_rows;
-  $rows = $rs->fetch_assoc();
-  $fullName = $rows['firstName'] . " " . $rows['lastName'];
+    if ($selectedConn) {
+        $query = "SELECT * FROM tblstudents WHERE admissionNumber = '$admissionNumber'";
+        $rs = $selectedConn->query($query);
+        $num = $rs->num_rows;
+        $rows = $rs->fetch_assoc();
+        $fullName = $rows['firstName'] . " " . $rows['lastName'];
+    } else {
+        $fullName = "Unknown Student";
+    }
 } else {
-  $fullName = "Unknown User";
+    $fullName = "Guest"; // or redirect to login page
 }
 ?>
 
