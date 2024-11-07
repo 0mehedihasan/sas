@@ -33,7 +33,7 @@ foreach ($dbs as $dbKey) {
   $query = "SELECT tblclass.className, tblclassteacher.classId 
             FROM tblclassteacher
             INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-            WHERE tblclassteacher.Id = '".$_SESSION['userId']."'";
+            WHERE tblclassteacher.emailAddress = '".$_SESSION['emailAddress']."'";
   $rs = $conn[$dbKey]->query($query);
   if ($rs && $rs->num_rows > 0) {
     $rrw = $rs->fetch_assoc();
