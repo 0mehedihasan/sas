@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging purposes
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+session_start();
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
@@ -15,38 +20,61 @@ $conn = [];
 foreach ($dbs as $db) {
   $conn[$db] = new mysqli($host, $user, $pass, $db);
   if ($conn[$db]->connect_error) {
-    die("Connection failed: " . $conn[$db]->connect_error);
+    die("Connection failed for $db: " . $conn[$db]->connect_error);
   }
 }
 
 $studentData = []; // Initialize student data array
 $classTeacherName = ""; // Initialize class teacher name
 $className = ""; // Initialize class name
+$admissionNumber = $_SESSION['admissionNumber'] ?? null;
 
-// Fetch student information, class name, and class teacher from multiple databases
-foreach ($dbs as $dbKey) {
-  $query = "SELECT tblstudents.firstName, tblstudents.lastName, tblstudents.otherName, 
-                   tblstudents.admissionNumber, tblstudents.classId, tblstudents.dateCreated, 
-                   tblclass.className 
-            FROM tblstudents 
-            JOIN tblclass ON tblstudents.classId = tblclass.Id 
-            WHERE tblstudents.Id = '$_SESSION[userId]'";
-  $result = $conn[$dbKey]->query($query);
-  if ($result && $result->num_rows > 0) {
-    $studentData = $result->fetch_assoc();
-    $className = $studentData['className']; // Set the class name
+// Check if session admissionNumber is set
+if ($admissionNumber) {
+    // Debugging statement to log session admissionNumber
+    error_log("Session admissionNumber: " . $admissionNumber);
 
-    // Fetch class teacher's name based on the student's classId
-    $classId = $studentData['classId'];
-    $teacherQuery = "SELECT firstName, lastName FROM tblclassteacher WHERE classId = '$classId' LIMIT 1";
-    $teacherResult = $conn[$dbKey]->query($teacherQuery);
-    if ($teacherResult && $teacherResult->num_rows > 0) {
-      $teacherData = $teacherResult->fetch_assoc();
-      $classTeacherName = $teacherData['firstName'] . ' ' . $teacherData['lastName'];
+    // Fetch student information, class name, and class teacher from multiple databases
+    foreach ($dbs as $dbKey) {
+        // Debugging statement to log the database being queried
+        error_log("Querying database: " . $dbKey);
+
+        $query = "SELECT tblstudents.firstName, tblstudents.lastName, tblstudents.otherName, 
+                         tblstudents.admissionNumber, tblstudents.classId, tblstudents.dateCreated, 
+                         tblclass.className 
+                  FROM tblstudents 
+                  JOIN tblclass ON tblstudents.classId = tblclass.Id 
+                  WHERE tblstudents.admissionNumber = '$admissionNumber'"; // Use admissionNumber from session
+        $result = $conn[$dbKey]->query($query);
+
+        if ($result && $result->num_rows > 0) {
+            $studentData = $result->fetch_assoc();
+            $className = $studentData['className']; // Set the class name
+
+            // Debugging statement to log student data
+            error_log("Student data from $dbKey: " . print_r($studentData, true));
+
+            // Fetch class teacher's name based on the student's classId
+            $classId = $studentData['classId'];
+            $teacherQuery = "SELECT firstName, lastName FROM tblclassteacher WHERE classId = '$classId' LIMIT 1";
+            $teacherResult = $conn[$dbKey]->query($teacherQuery);
+            if ($teacherResult && $teacherResult->num_rows > 0) {
+                $teacherData = $teacherResult->fetch_assoc();
+                $classTeacherName = $teacherData['firstName'] . ' ' . $teacherData['lastName'];
+
+                // Debugging statement to log teacher data
+                error_log("Teacher data from $dbKey: " . print_r($teacherData, true));
+            }
+            break; // Stop searching once the data is found
+        }
     }
-    break; // Stop searching once the data is found
-  }
+} else {
+    // Handle case when admissionNumber is not found in session
+    $studentData = ['firstName' => 'Guest', 'lastName' => '', 'otherName' => '', 'admissionNumber' => 'N/A', 'className' => 'N/A', 'dateCreated' => 'N/A'];
 }
+
+// Debugging statement to log final student data
+error_log("Final student data: " . print_r($studentData, true));
 ?>
 
 <!DOCTYPE html>
