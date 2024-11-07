@@ -86,6 +86,37 @@ if (isset($_POST['login'])) {
             }
         }
         echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
+    } else if ($userType == "Student") {
+        foreach ($dbs as $db) {
+            $dbConnection = $conn[$db];
+            $query = $dbConnection->prepare("SELECT * FROM tblstudents WHERE admissionNumber = ?");
+            if ($query) {
+                $query->bind_param("s", $username);
+                $query->execute();
+                $result = $query->get_result();
+
+                if ($result->num_rows > 0) {
+                    $rows = $result->fetch_assoc();
+
+                    // Use password hashing in production
+                    if ($password === $rows['password']) { // Consider using password_verify() here
+                        $_SESSION['userId'] = $rows['Id'];
+                        $_SESSION['firstName'] = $rows['firstName'];
+                        $_SESSION['lastName'] = $rows['lastName'];
+                        $_SESSION['admissionNumber'] = $rows['admissionNumber'];
+
+                        // Redirect based on user type
+                        $redirectLocation = "Student/index.php";
+                        echo "<script type='text/javascript'>window.location = ('$redirectLocation')</script>";
+                        exit;
+                    } else {
+                        echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
+                    }
+                }
+                $query->close();
+            }
+        }
+        echo "<div class='alert alert-danger' role='alert'>Invalid Username/Password!</div>";
     } else {
         echo "<div class='alert alert-danger' role='alert'>Invalid User Role!</div>";
     }
@@ -127,6 +158,7 @@ if (isset($_POST['login'])) {
                                                 <option value="">--Select User Roles--</option>
                                                 <option value="Administrator">Administrator</option>
                                                 <option value="ClassTeacher">ClassTeacher</option>
+                                                <option value="Student">Student</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
