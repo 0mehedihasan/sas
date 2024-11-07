@@ -2,11 +2,11 @@
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
-// Function to get the correct database connection based on user ID
-function getDatabaseConnection($conn, $userId) {
+// Function to get the correct database connection based on user email
+function getDatabaseConnection($conn, $emailAddress) {
   $databases = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
   foreach ($databases as $dbKey) {
-    $query = "SELECT * FROM tblclassteacher WHERE Id = $userId";
+    $query = "SELECT * FROM tblclassteacher WHERE emailAddress = '$emailAddress'";
     $result = $conn[$dbKey]->query($query);
     if ($result && $result->num_rows > 0) {
       return $conn[$dbKey];
@@ -15,11 +15,11 @@ function getDatabaseConnection($conn, $userId) {
   return null;
 }
 
-$userId = $_SESSION['userId'];
-$selectedConn = getDatabaseConnection($conn, $userId);
+$emailAddress = $_SESSION['emailAddress'];
+$selectedConn = getDatabaseConnection($conn, $emailAddress);
 
 if ($selectedConn) {
-  $query = "SELECT * FROM tblclassteacher WHERE Id = $userId";
+  $query = "SELECT * FROM tblclassteacher WHERE emailAddress = '$emailAddress'";
   $rs = $selectedConn->query($query);
   $num = $rs->num_rows;
   $rows = $rs->fetch_assoc();

@@ -4,6 +4,11 @@ session_start();
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
+// Check if the emailAddress session variable is set
+if (!isset($_SESSION['emailAddress'])) {
+  die("Session variable 'emailAddress' is not set. Please log in.");
+}
+
 // Define the database connection variables
 $host = 'localhost:5222';
 $user = 'root';
@@ -30,7 +35,7 @@ foreach ($dbs as $dbKey) {
   $query = "SELECT tblclass.className, tblclassteacher.classId 
             FROM tblclassteacher
             INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-            WHERE tblclassteacher.Id = '$_SESSION[userId]'";
+            WHERE tblclassteacher.emailAddress = '$_SESSION[emailAddress]'";
   $rs = $conn[$dbKey]->query($query);
   if ($rs && $rs->num_rows > 0) {
     $rrw = $rs->fetch_assoc();
