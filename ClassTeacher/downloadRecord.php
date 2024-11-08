@@ -1,96 +1,108 @@
-<?php 
-error_reporting(0);
-session_start();
+<?php
+// Include database connection
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
-// Define the database connection variables
+// Define the current date
+$dateTaken = date("Y-m-d");
+
+// Initialize database variables
 $host = 'localhost:5222';
 $user = 'root';
 $pass = '';
-
-// Define the databases
 $dbs = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
 
-// Define the database connections
+// Connect to the correct database based on class
 $conn = [];
 foreach ($dbs as $db) {
     $conn[$db] = new mysqli($host, $user, $pass, $db);
     if ($conn[$db]->connect_error) {
-        die("Connection failed: " . $conn[$db]->connect_error);
+        die("Connection failed for $db: " . $conn[$db]->connect_error);
     }
 }
 
-$statusMsg = ""; // Initialize the status message variable
-
-// Fetch class name for the class teacher from multiple databases
-$rrw = ['className' => ''];
+// Find class ID from session email using prepared statements to prevent SQL injection
 $classId = null;
+$className = ''; // Initialize class name
 foreach ($dbs as $dbKey) {
-  $query = "SELECT tblclass.className, tblclassteacher.classId 
-            FROM tblclassteacher
-            INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-            WHERE tblclassteacher.Id = '$_SESSION[userId]'";
-  $rs = $conn[$dbKey]->query($query);
-  if ($rs && $rs->num_rows > 0) {
-    $rrw = $rs->fetch_assoc();
-    $classId = $rrw['classId'];
-    break;
-  }
+    $stmt = $conn[$dbKey]->prepare("SELECT tblclass.className, tblclassteacher.classId 
+                                    FROM tblclassteacher
+                                    INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+                                    WHERE tblclassteacher.emailAddress = ?");
+    $stmt->bind_param("s", $_SESSION['emailAddress']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result && $result->num_rows > 0) {
+        $rrw = $result->fetch_assoc();
+        $classId = $rrw['classId'];
+        $className = $rrw['className'];  // Fetch class name
+        $dbKeyForAttendance = $dbKey;
+        break;
+    }
+    $stmt->close();
 }
 
-if ($classId) {
-    $filename = "Attendance list";
-    $dateTaken = date("Y-m-d");
+// Ensure classId is found before proceeding
+if ($classId === null) {
+    die("Class ID not found for the given email.");
+}
 
-    $cnt = 1;
-    $ret = $conn['sas_six']->query("SELECT tblattendance.Id, tblattendance.status, tblattendance.dateTimeTaken, tblclass.className,
-            tblstudents.firstName, tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber
-            FROM tblattendance
-            INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-            INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-            WHERE tblattendance.dateTimeTaken = '$dateTaken' AND tblattendance.classId = '$classId'");
+// Retrieve today’s attendance records
+$stmt = $conn[$dbKeyForAttendance]->prepare("SELECT tblattendance.Id, tblattendance.status, tblattendance.dateTimeTaken, 
+                                                    tblclass.className, tblstudents.firstName, tblstudents.lastName, 
+                                                    tblstudents.otherName, tblstudents.admissionNumber
+                                            FROM tblattendance
+                                            INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
+                                            INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
+                                            WHERE tblattendance.dateTimeTaken = ? AND tblattendance.classId = ?");
+$stmt->bind_param("si", $dateTaken, $classId);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if ($ret->num_rows > 0) {
-            header("Content-type: application/octet-stream");
-            header("Content-Disposition: attachment; filename=".$filename."-report.xls");
-            header("Pragma: no-cache");
-            header("Expires: 0");
+if (!$result) {
+    die("Query failed: " . $conn[$dbKeyForAttendance]->error);
+}
 
-            echo '<table border="1">
-                    <thead>
-                            <tr>
-                            <th>#</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Other Name</th>
-                            <th>Admission No</th>
-                            <th>Class</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            </tr>
-                    </thead>';
+// Set headers to download as Excel file
+header("Content-Type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=\"attendance_{$className}_{$dateTaken}.xls\"");
+header("Pragma: no-cache");
+header("Expires: 0");
 
-            while ($row = $ret->fetch_assoc()) {
-                    $status = $row['status'] == '1' ? "Present" : "Absent";
+// Create table structure for Excel file
+echo "<table border='1'>";
+echo "<tr>
+        <th>#</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Other Name</th>
+        <th>Admission No</th>
+        <th>Class</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>";
 
-                    echo '<tr>
-                            <td>'.$cnt.'</td>
-                            <td>'.$row['firstName'].'</td>
-                            <td>'.$row['lastName'].'</td>
-                            <td>'.$row['otherName'].'</td>
-                            <td>'.$row['admissionNumber'].'</td>
-                            <td>'.$row['className'].'</td>
-                            <td>'.$status.'</td>
-                            <td>'.$row['dateTimeTaken'].'</td>
-                    </tr>';
-                    $cnt++;
-            }
-            echo '</table>';
-    } else {
-        echo "No records found for the selected date.";
-    }
-} else {
-    echo "Class ID not found.";
+// Output data rows
+$sn = 0;
+while ($row = $result->fetch_assoc()) {
+    $sn++;
+    $status = $row['status'] == '1' ? "Present" : "Absent";
+    echo "<tr>
+            <td>{$sn}</td>
+            <td>{$row['firstName']}</td>
+            <td>{$row['lastName']}</td>
+            <td>{$row['otherName']}</td>
+            <td>{$row['admissionNumber']}</td>
+            <td>{$row['className']}</td>
+            <td>{$status}</td>
+            <td>{$row['dateTimeTaken']}</td>
+          </tr>";
+}
+
+echo "</table>";
+
+// Close database connections
+foreach ($conn as $c) {
+    $c->close();
 }
 ?>
