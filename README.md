@@ -92,13 +92,18 @@ foreach ($dbs as $dbKey) {
 # Output Screenshots
 Here are some screenshots of the system in action:
 ## Login Page:
-![Login Panel](https://github.com/0mehedihasan/sas/blob/main/snap/login.PNG)- Login Page
+- Login Page
+![Login Panel](https://github.com/0mehedihasan/sas/blob/main/snap/login.PNG)
 ## Admin Panel:
-![Admin Panel](https://github.com/0mehedihasan/sas/blob/main/snap/admindashboard.PNG)- Admin Dashboard
-![Admin Create Class](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateclass.PNG)-Admin Create Class
-![Admin Create Class teacher](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateteacher.PNG)-Admin Create Teacher
+- Admin Dashboard
+![Admin Panel](https://github.com/0mehedihasan/sas/blob/main/snap/admindashboard.PNG)
+- Admin Create Class
+![Admin Create Class](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateclass.PNG)
+- Admin Create Teacher
+![Admin Create Class teacher](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateteacher.PNG)
 ![Admin Create Class teache](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateteacher1.PNG)
-![Admin Create Student](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent.PNG)-Admin Create Student
+- Admin Create Student
+![Admin Create Student](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent.PNG)
 ![Admin Create Student1](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent1.PNG)
 ## Teacher Panel:
 ![Teacher Panel](snap/teacherdashboard.png)
