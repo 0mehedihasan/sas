@@ -95,12 +95,12 @@ Here are some screenshots of the system in action:
 ![Login Page](snap/login.png)
 
 ### Admin Panel
-![Admin Panel](snap/admindashboard.png)
-![Admin Create Class](snap/admincreateclass.png)
-![Admin Create Class](snap/admincreateteacher.png)
-![Admin Create Class](snap/admincreateteacher1.png)
-![Admin Create Class](snap/admincreatestudent.png)
-![Admin Create Class](snap/admincreatestudent1.png)
+![Admin Panel](https://github.com/0mehedihasan/sas/blob/main/snap/login.PNG)- Login Page
+![Admin Create Class](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateclass.png)-Admin Create Class
+![Admin Create Class teacher](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateteacher.png)-Admin Create Teacher
+![Admin Create Class teache](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateteacher1.png)
+![Admin Create Student](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent.png)-Admin Create Student
+![Admin Create Student1](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent1.png)
 ### Teacher Panel
 ![Teacher Panel](snap/teacherdashboard.png)
 
