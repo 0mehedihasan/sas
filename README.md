@@ -120,11 +120,11 @@ Here are some screenshots of the system in action:
 
 ## Student Panel:
 - Student Dashboard
-![Student Dashboard](https://github.com/0mehedihasan/sas/blob/main/snap/studentdasboard.PNG)
+![Student Dashboard](https://github.com/0mehedihasan/sas/blob/main/snap/studentdashboard.PNG)
 - View Attendance
 ![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/studentviewattendance.PNG)
 - Download Attendance
-![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/studentviewattendancefile.PNG)
+![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/studentattendancefile.PNG)
 
 
 ### XAMPP & MySQL Workbench Clash <br>
