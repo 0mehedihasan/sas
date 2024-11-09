@@ -51,44 +51,116 @@ The project is designed to handle multiple databases to manage different grade l
    - Queries are executed on the selected database connection to fetch or insert data.
    - For example, when a teacher logs in, the system fetches the class information from the appropriate database based on the teacher's assigned class.
 
-### Example Code Snippet
+## Example Code Snippet
+Here's the dbcon.php code:
+```php
+<?php
+// dbcon.php
+
+// Database connection parameters
+$host = "localhost:5222"; // Hostname with port number
+$user = "root";           // Database username
+$pass = "";               // Database password (empty in this case)
+
+// List of database names to connect to
+$dbs = [
+    "sas_six",
+    "sas_seven",
+    "sas_eight",
+    "sas_other"
+];
+
+// Array to hold the database connections
+$conn = [];
+
+// Create a connection for each database
+foreach ($dbs as $dbName) {
+    // Attempt to create a new database connection for the current database
+    $dbConnection = new mysqli($host, $user, $pass, $dbName);
+    
+    // Check if the connection was successful
+    if ($dbConnection->connect_error) {
+        // If there is a connection error, stop the script and show an error message
+        die("Connection failed for $dbName: " . $dbConnection->connect_error);
+    }
+
+    // If the connection is successful, store it in the $conn array with the database name as the key
+    $conn[$dbName] = $dbConnection;
+}
+
+// At this point, $conn array holds active connections to each specified database
+?>
+```
+**Explanation of Comments Added:**
+- **Database Parameters**: Explains the purpose of each variable (`$host`, `$user`, `$pass`, and `$dbs`).
+- **Connection Array**: Indicates that `$conn` is used to store the database connections.
+- **Loop & Connection Creation**: Details the purpose of the `foreach` loop and the connection creation for each database.
+- **Error Handling**: Describes the `if` statement that checks for connection errors and the `die()` function to stop the script if an error occurs.
+- **Successful Connection Storage**: Notes that the connection is stored in `$conn` only if it is successful.
 
 Here’s an example of how the project dynamically selects the database connection:
-
+This code connects to multiple databases, checks if there is a record for a class teacher's `classId` based on the current `userId` from the session, and retrieves the associated `className`. 
 ```php
+<?php
 // Define the database connection variables
-$host = 'localhost:5222';
-$user = 'root';
-$pass = '';
+$host = 'localhost:5222'; // Hostname with port for the database server
+$user = 'root';           // Username for database access
+$pass = '';               // Password for database access (empty in this case)
 
-// Define the databases
+// Define the list of databases to connect to
 $dbs = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
 
-// Define the database connections
+// Initialize an empty array to store the database connections
 $conn = [];
+
+// Establish a connection to each database in the $dbs array
 foreach ($dbs as $db) {
+  // Create a new connection for each database and store it in the $conn array
   $conn[$db] = new mysqli($host, $user, $pass, $db);
+
+  // Check if the connection was successful
   if ($conn[$db]->connect_error) {
+    // If there is an error, stop the script and display an error message
     die("Connection failed for $db: " . $conn[$db]->connect_error);
   }
 }
 
-// Fetch class name for the class teacher from multiple databases
+// Prepare an empty array to hold the fetched class data
 $rrw = ['className' => ''];
-$classId = null;
+$classId = null; // Variable to store the classId once found
+
+// Loop through each database to execute the query
 foreach ($dbs as $dbKey) {
+  // SQL query to fetch class name and class ID where the class teacher matches the current user ID from the session
   $query = "SELECT tblclass.className, tblclassteacher.classId 
             FROM tblclassteacher
             INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
             WHERE tblclassteacher.Id = '".$_SESSION['userId']."'";
+
+  // Execute the query on the current database connection
   $rs = $conn[$dbKey]->query($query);
+
+  // Check if the query was successful and returned any rows
   if ($rs && $rs->num_rows > 0) {
+    // Fetch the result as an associative array
     $rrw = $rs->fetch_assoc();
+    // Store the class ID from the result
     $classId = $rrw['classId'];
+    // Break out of the loop once data is found
     break;
   }
 }
+
+// At this point, $rrw contains the class name and $classId holds the class ID for the class teacher if found
+?>
 ```
+**Explanation of Comments Added**:
+- **Database Parameters**: Clear explanations for each variable involved in the database connection (`$host`, `$user`, `$pass`, and `$dbs`).
+- **Connection Array**: Explains the purpose of `$conn` to hold connections to each database.
+- **Loop & Connection Creation**: Details the logic of creating a database connection for each database and checking for errors.
+- **Class Data Retrieval**: Comments guide through the query execution for fetching the `className` and `classId` for the teacher's class from each database.
+- **Loop Break**: Explains that the loop stops after the class data is found, improving efficiency by avoiding unnecessary queries on remaining databases.
+
 # Output Screenshots
 Here are some screenshots of the system in action:
 ## Login Page:
