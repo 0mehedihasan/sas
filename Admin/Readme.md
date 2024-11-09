@@ -1,9 +1,9 @@
  
 **Admin Login Details**
-Email : admin@mail.com
-Password: Password@123
+Email : super@admin
+Password: admin
 
 **Teacher Login Details** 
-Email : teacher@mail.com
+Email : class@six
 Password: pass123
 
