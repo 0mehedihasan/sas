@@ -89,5 +89,23 @@ foreach ($dbs as $dbKey) {
   }
 }
 ```
-XAMPP & MySQL Workbench Clash <br>
+## Output Screenshots
+Here are some screenshots of the system in action:
+### Login Page
+![Login Page](snap/login.png)
+
+### Admin Panel
+![Admin Panel](snap/admindashboard.png)
+![Admin Create Class](snap/admincreateclass.png)
+![Admin Create Class](snap/admincreateteacher.png)
+![Admin Create Class](snap/admincreateteacher1.png)
+![Admin Create Class](snap/admincreatestudent.png)
+![Admin Create Class](snap/admincreatestudent1.png)
+### Teacher Panel
+![Teacher Panel](snap/teacherdashboard.png)
+
+### Student Panel
+![Student Panel](snap/studentdashboard.png)
+
+### XAMPP & MySQL Workbench Clash <br>
 Solution: https://www.youtube.com/watch?v=gxYpitQmais&t=502s&ab_channel=FahimAmin
