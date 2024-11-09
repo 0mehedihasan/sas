@@ -106,7 +106,17 @@ Here are some screenshots of the system in action:
 ![Admin Create Student](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent.PNG)
 ![Admin Create Student1](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent1.PNG)
 ## Teacher Panel:
-![Teacher Panel](snap/teacherdashboard.png)
+- Teacher Dashboard
+![Teacher Dashboard](https://github.com/0mehedihasan/sas/blob/main/snap/teacherdasboard.PNG)
+- View Student List
+![View Student List](https://github.com/0mehedihasan/sas/blob/main/snap/teacherstudentview.PNG)
+- Take Attendance
+![Take Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/takeattendance.PNG)
+![Take Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/takeattendance1.PNG)
+- View Attendance
+![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/viewattendance.PNG)
+- Download Attendance
+![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/viewattendancefile.PNG)
 
 ## Student Panel:
 ![Student Panel](snap/studentdashboard.png)
