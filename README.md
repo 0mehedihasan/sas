@@ -119,7 +119,13 @@ Here are some screenshots of the system in action:
 ![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/viewattendancefile.PNG)
 
 ## Student Panel:
-![Student Panel](snap/studentdashboard.png)
+- Student Dashboard
+![Student Dashboard](https://github.com/0mehedihasan/sas/blob/main/snap/studentdasboard.PNG)
+- View Attendance
+![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/studentviewattendance.PNG)
+- Download Attendance
+![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/studentviewattendancefile.PNG)
+
 
 ### XAMPP & MySQL Workbench Clash <br>
 Solution: https://www.youtube.com/watch?v=gxYpitQmais&t=502s&ab_channel=FahimAmin
