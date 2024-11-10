@@ -26,6 +26,42 @@ A distributed database-based School Attendance Management System designed to man
 - **Database**: MySQL (via XAMPP)
 - **Local Server**: XAMPP
 
+## Distributed Database Management System (DDBMS)
+### Diagram
+![Distributed Database Management System Diagram](https://github.com/0mehedihasan/sas/blob/main/snap/login.PNG)
+
+The above diagram provides a visual representation of the DDBMS architecture.
+This image contains an overview of a **Distributed Database Management System (DDBMS)** for a **Student Attendance System**. The DDBMS is designed to manage and partition data access for different classes, teachers, students, and administrators within a school setting.
+
+### Architecture Overview
+The DDBMS architecture is structured as follows:
+#### 1. Central Database
+- A single, centralized database where all data is stored.
+- Accessible by the **Student Attendance System (SAS)**, which manages attendance records and user access across different classes.
+#### 2. Student Attendance System (SAS)
+- The main interface connecting teachers, students, and administrators with their relevant attendance data.
+- Ensures partitioned access to the database, allowing each class to only access its specific data subset.
+#### 3. Class-Specific Partitioned Databases
+The database is partitioned based on class to enhance data security and control:
+- **sas_six**: 
+  - Accessible only by Class 6 teachers, students, and administrators.
+  - Contains data specific to Class 6.
+- **sas_seven**:
+  - Accessible only by Class 7 teachers, students, and administrators.
+  - Contains data specific to Class 7.
+- **sas_eight**:
+  - Accessible only by Class 8 teachers, students, and administrators.
+  - Contains data specific to Class 8.
+#### 4. General Database (sas_other)
+- **sas_other**: A single database accessible by all classes **except Classes 6, 7, and 8**.
+- Allows access to teachers, students, and administrators across these other classes.
+### Data Access Control
+- Each partitioned database is restricted to its respective class, providing enhanced data security by isolating access based on user role and class.
+- The **sas_other** database is used as a consolidated resource for classes outside of Class 6, Class 7, and Class 8.
+### Summary
+This DDBMS setup improves data efficiency and security by ensuring that each segment of users can only access the data they are authorized to see. The structure allows the school to manage attendance records more effectively, with tailored access for each class.
+---
+
 ## Project Structure
 
 The main project files are stored in the `htdocs` folder of XAMPP, and the system connects to the correct database depending on the login credentials.
