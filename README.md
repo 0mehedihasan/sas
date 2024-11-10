@@ -35,6 +35,7 @@ The DDBMS architecture is structured as follows:
 #### 1. Central Database
 - A single, centralized database where all data is stored.
 - Accessible by the **Student Attendance System (SAS)**, which manages attendance records and user access across different classes.
+- **Note:** Originally, the system was designed with a single, centralized database where all data would be stored and accessed by the Student Attendance System (SAS) for managing attendance records and user access across different classes. However, for enhanced efficiency and scalability, a distributed database architecture was implemented instead of a centralized one. This approach allows for better load distribution, faster data retrieval, and greater fault tolerance across the system.
 #### 2. Student Attendance System (SAS)
 - The main interface connecting teachers, students, and administrators with their relevant attendance data.
 - Ensures partitioned access to the database, allowing each class to only access its specific data subset.
