@@ -28,7 +28,7 @@ A distributed database-based School Attendance Management System designed to man
 
 ## Distributed Database Management System (DDBMS)
 ### ER Diagram 
-[ER Diagram](https://github.com/0mehedihasan/sas/blob/main/Proposal%2CSlides%2CReports/ERdiagram.png)
+![ER Diagram](https://github.com/0mehedihasan/sas/blob/main/Proposal%2CSlides%2CReports/ERdiagram.png)
 
 ### Diagram
 ![Distributed Database Management System Diagram](https://github.com/0mehedihasan/sas/blob/main/Proposal%2CSlides%2CReports/ddbms.drawio.png)
