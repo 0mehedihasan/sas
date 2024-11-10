@@ -27,6 +27,9 @@ A distributed database-based School Attendance Management System designed to man
 - **Local Server**: XAMPP
 
 ## Distributed Database Management System (DDBMS)
+### ER Diagram 
+[ER Diagram](https://github.com/0mehedihasan/sas/blob/main/Proposal%2CSlides%2CReports/ERdiagram.png)
+
 ### Diagram
 ![Distributed Database Management System Diagram](https://github.com/0mehedihasan/sas/blob/main/Proposal%2CSlides%2CReports/ddbms.drawio.png)
 - This image contains an overview of a **Distributed Database Management System (DDBMS)** for a **Student Attendance System**. The DDBMS is designed to manage and partition data access for different classes, teachers, students, and administrators within a school setting.
