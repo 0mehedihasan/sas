@@ -3,7 +3,7 @@
     <div class="sidebar-brand-icon">
       <img src="img/logo/attnlg.jpg">
     </div>
-    <div class="sidebar-brand-text mx-3">School Attendance System(SAS)</div>
+    <div class="sidebar-brand-text mx-3">SAS</div>
   </a>
   <hr class="sidebar-divider my-0">
   <li class="nav-item active">
