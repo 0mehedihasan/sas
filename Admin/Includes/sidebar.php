@@ -3,7 +3,7 @@
     <div class="sidebar-brand-icon">
       <img src="img/logo/attnlg.jpg">
     </div>
-    <div class="sidebar-brand-text mx-3">Code Camp BD</div>
+    <div class="sidebar-brand-text mx-3">School Attendance System(SAS)</div>
   </a>
   <hr class="sidebar-divider my-0">
   <li class="nav-item active">
