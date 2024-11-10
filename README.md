@@ -1,7 +1,8 @@
 # School Attendance Management System
 
 A distributed database-based School Attendance Management System designed to manage school attendance records efficiently. This project is built using PHP, HTML, CSS, and JavaScript and operates on multiple databases for scalability and organization.
-
+- Project Proposal:
+[View SAS Project Proposal PDF](https://github.com/0mehedihasan/sas/raw/main/Proposal%2CSlides%2CReports/SAS%20project%20proposal.pdf)
 ## Features
 
 - **Admin Panel**:
