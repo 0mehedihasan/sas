@@ -11,10 +11,11 @@ A distributed database-based School Attendance Management System designed to man
   - View class student lists.
   - Take daily attendance.
   - View attendance records.
-  - Download attendance records in Excel format.
+  - View Specific Student all attendance records.
+  - Download daily attendance records in Excel format.
 - **Student Panel**:
   - View attendance records.
-  - Download attendance records in Excel format.
+  - Download all attendance records in Excel format.
   - View personal information.
 - **Distributed Databases**:
   - Utilizes multiple databases (`sas_six`, `sas_seven`, `sas_eight`, `sas_other`) based on the grade level, allowing data separation and scalability.
