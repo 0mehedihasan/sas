@@ -225,6 +225,8 @@ Here are some screenshots of the system in action:
 ![Take Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/takeattendance1.PNG)
 - View Attendance
 ![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/viewattendance.PNG)
+- View Specific student Attendance
+![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/specificstudentview.PNG)
 - Download Attendance
 ![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/viewattendancefile.PNG)
 

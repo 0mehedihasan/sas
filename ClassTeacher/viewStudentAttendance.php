@@ -1,117 +1,75 @@
 <?php 
-// Enable error reporting for debugging purposes
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 session_start();
 include '../Includes/dbcon.php';
 include '../Includes/session.php';
 
-// Define the database connection variables
 $host = 'localhost:5222';
 $user = 'root';
 $pass = '';
-
-// Define the databases
 $dbs = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
-
-// Define the database connections
 $conn = [];
+
 foreach ($dbs as $db) {
-  $conn[$db] = new mysqli($host, $user, $pass, $db);
-  if ($conn[$db]->connect_error) {
-    die("Connection failed for $db: " . $conn[$db]->connect_error);
-  }
+    $conn[$db] = new mysqli($host, $user, $pass, $db);
+    if ($conn[$db]->connect_error) {
+        die("Connection failed for $db: " . $conn[$db]->connect_error);
+    }
 }
 
-// Ensure session variables are set
-if (!isset($_SESSION['userId']) || !isset($_SESSION['classId'])) {
-  die("Session variables not set. Please log in again.");
+$statusMsg = ""; 
+$attendanceRecords = [];
+$searchQuery = '';
+
+// Fetch class information for the logged-in teacher
+$classId = null;
+foreach ($dbs as $dbKey) {
+    $query = "SELECT tblclass.className, tblclassteacher.classId 
+              FROM tblclassteacher
+              INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
+              WHERE tblclassteacher.emailAddress = '".$_SESSION['emailAddress']."'";
+    $rs = $conn[$dbKey]->query($query);
+    if ($rs && $rs->num_rows > 0) {
+        $rrw = $rs->fetch_assoc();
+        $classId = $rrw['classId'];
+        break;
+    }
 }
 
-// Query to get the class name for the logged-in user
-$query = "SELECT tblclass.className 
-          FROM tblclassteacher
-          INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-          WHERE tblclassteacher.Id = '{$_SESSION['userId']}'";
-$rs = $conn['sas_six']->query($query); // Assuming the session userId is in sas_six database
+if ($classId && isset($_POST['search'])) {
+    $admissionNumber = $_POST['admissionNumber'] ?? '';
+    $studentName = $_POST['studentName'] ?? '';
+    
+    // Build search conditions based on provided input
+    $conditions = [];
+    if (!empty($admissionNumber)) {
+        $conditions[] = "tblstudents.admissionNumber = '$admissionNumber'";
+    }
+    if (!empty($studentName)) {
+        $conditions[] = "(tblstudents.firstName LIKE '%$studentName%' OR tblstudents.lastName LIKE '%$studentName%')";
+    }
+    
+    if (count($conditions) > 0) {
+        $searchQuery = "SELECT tblattendance.Id, tblattendance.status, tblattendance.dateTimeTaken, tblclass.className,
+                        tblstudents.firstName, tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber
+                        FROM tblattendance
+                        INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
+                        INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
+                        WHERE tblattendance.classId = '$classId' AND " . implode(' AND ', $conditions) . "
+                        ORDER BY tblattendance.dateTimeTaken DESC";
+        
+        $rs = $conn[$dbKey]->query($searchQuery);
 
-if (!$rs) {
-  die("Query failed: " . $conn['sas_six']->error);
-}
+        if (!$rs) {
+            die("Query failed: " . $conn[$dbKey]->error);
+        }
 
-if ($rs->num_rows == 0) {
-  die("No class found for the logged-in user.");
-}
-
-$classData = $rs->fetch_assoc();
-$className = $classData['className'] ?? '';
-
-// Date taken for attendance
-$dateTaken = date("Y-m-d");
-
-// Check if attendance record exists for today
-$qurty = $conn['sas_six']->query("SELECT * FROM tblattendance WHERE classId = '{$_SESSION['classId']}' AND dateTimeTaken='$dateTaken'");
-
-if (!$qurty) {
-  die("Query failed: " . $conn['sas_six']->error);
-}
-
-if ($qurty->num_rows == 0) {
-  // Insert attendance records if none exist for today
-  $qus = $conn['sas_six']->query("SELECT * FROM tblstudents WHERE classId = '{$_SESSION['classId']}'");
-  if (!$qus) {
-    die("Query failed: " . $conn['sas_six']->error);
-  }
-  while ($student = $qus->fetch_assoc()) {
-    $conn['sas_six']->query("INSERT INTO tblattendance(admissionNo, classId, status, dateTimeTaken) 
-                             VALUES('{$student['admissionNumber']}', '{$_SESSION['classId']}', '0', '$dateTaken')");
-  }
-}
-
-// Handling form submission to view attendance
-if (isset($_POST['view'])) {
-  $admissionNumber = $_POST['admissionNumber'];
-  $type = $_POST['type'];
-
-  if ($type == "1") { // All Attendance
-    $query = "SELECT tblattendance.Id, tblattendance.status, tblattendance.dateTimeTaken, tblclass.className,
-              tblstudents.firstName, tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber
-              FROM tblattendance
-              INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-              INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-              WHERE tblattendance.admissionNo = '$admissionNumber' AND tblattendance.classId = '{$_SESSION['classId']}'";
-  } elseif ($type == "2") { // Single Date Attendance
-    $singleDate = $_POST['singleDate'] ?? '';
-    $query = "SELECT tblattendance.Id, tblattendance.status, tblattendance.dateTimeTaken, tblclass.className,
-              tblstudents.firstName, tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber
-              FROM tblattendance
-              INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-              INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-              WHERE tblattendance.dateTimeTaken = '$singleDate' AND tblattendance.admissionNo = '$admissionNumber' AND tblattendance.classId = '{$_SESSION['classId']}'";
-  } elseif ($type == "3") { // Date Range Attendance
-    $fromDate = $_POST['fromDate'];
-    $toDate = $_POST['toDate'];
-    $query = "SELECT tblattendance.Id, tblattendance.status, tblattendance.dateTimeTaken, tblclass.className,
-              tblstudents.firstName, tblstudents.lastName, tblstudents.otherName, tblstudents.admissionNumber
-              FROM tblattendance
-              INNER JOIN tblclass ON tblclass.Id = tblattendance.classId
-              INNER JOIN tblstudents ON tblstudents.admissionNumber = tblattendance.admissionNo
-              WHERE tblattendance.dateTimeTaken BETWEEN '$fromDate' AND '$toDate' AND tblattendance.admissionNo = '$admissionNumber' AND tblattendance.classId = '{$_SESSION['classId']}'";
-  }
-
-  $rs = $conn['sas_six']->query($query);
-  if (!$rs) {
-    die("Query failed: " . $conn['sas_six']->error);
-  }
-
-  $attendanceRecords = $rs->fetch_all(MYSQLI_ASSOC);
+        $attendanceRecords = $rs->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -125,11 +83,9 @@ if (isset($_POST['view'])) {
 
 <body id="page-top">
   <div id="wrapper">
-    <!-- Sidebar -->
     <?php include "Includes/sidebar.php";?>
     <div id="content-wrapper" class="d-flex flex-column">
       <div id="content">
-        <!-- TopBar -->
         <?php include "Includes/topbar.php";?>
 
         <div class="container-fluid" id="container-wrapper">
@@ -145,40 +101,21 @@ if (isset($_POST['view'])) {
             <div class="col-lg-12">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">View Student Attendance</h6>
-                  <?php echo $statusMsg ?? ''; ?>
+                  <h6 class="m-0 font-weight-bold text-primary">Search for a Student</h6>
                 </div>
                 <div class="card-body">
                   <form method="post">
-                    <div class="form-group row mb-3">
-                      <div class="col-xl-6">
-                        <label class="form-control-label">Select Student<span class="text-danger ml-2">*</span></label>
-                        <?php
-                        $qry= "SELECT * FROM tblstudents WHERE classId = '{$_SESSION['classId']}' ORDER BY firstName ASC";
-                        $result = $conn['sas_six']->query($qry);
-                        $num = $result->num_rows;		
-                        if ($num > 0){
-                          echo '<select required name="admissionNumber" class="form-control mb-3">';
-                          echo '<option value="">--Select Student--</option>';
-                          while ($rows = $result->fetch_assoc()){
-                            echo '<option value="'.$rows['admissionNumber'].'">'.$rows['firstName'].' '.$rows['lastName'].'</option>';
-                          }
-                          echo '</select>';
-                        }
-                        ?>  
+                    <div class="form-group row">
+                      <div class="col-md-6">
+                        <label for="admissionNumber">Admission Number</label>
+                        <input type="text" class="form-control" id="admissionNumber" name="admissionNumber" placeholder="Enter Admission Number">
                       </div>
-                      <div class="col-xl-6">
-                        <label class="form-control-label">Type<span class="text-danger ml-2">*</span></label>
-                        <select required name="type" onchange="typeDropDown(this.value)" class="form-control mb-3">
-                          <option value="">--Select--</option>
-                          <option value="1">All</option>
-                          <option value="2">By Single Date</option>
-                          <option value="3">By Date Range</option>
-                        </select>
+                      <div class="col-md-6">
+                        <label for="studentName">Student Name</label>
+                        <input type="text" class="form-control" id="studentName" name="studentName" placeholder="Enter Student Name">
                       </div>
                     </div>
-                    <div id="txtHint"></div>
-                    <button type="submit" name="view" class="btn btn-primary">View Attendance</button>
+                    <button type="submit" name="search" class="btn btn-primary">Search</button>
                   </form>
                 </div>
               </div>
@@ -187,7 +124,7 @@ if (isset($_POST['view'])) {
                 <div class="col-lg-12">
                   <div class="card mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                      <h6 class="m-0 font-weight-bold text-primary">Class Attendance</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Attendance Records</h6>
                     </div>
                     <div class="table-responsive p-3">
                       <table class="table align-items-center table-flush table-hover" id="dataTableHover">
@@ -204,52 +141,38 @@ if (isset($_POST['view'])) {
                           </tr>
                         </thead>
                         <tbody>
-                          <?php
-                          if (isset($attendanceRecords) && count($attendanceRecords) > 0) {
-                            $sn = 0;
-                            foreach ($attendanceRecords as $record) {
-                              $sn++;
-                              $status = $record['status'] == '1' ? "Present" : "Absent";
-                              $color = $record['status'] == '1' ? "#00FF00" : "#FF0000";
-                              echo "<tr>
-                                      <td>{$sn}</td>
-                                      <td>{$record['firstName']}</td>
-                                      <td>{$record['lastName']}</td>
-                                      <td>{$record['otherName']}</td>
-                                      <td>{$record['admissionNumber']}</td>
-                                      <td>{$record['className']}</td>
-                                      <td style='background-color:{$color}'>{$status}</td>
-                                      <td>{$record['dateTimeTaken']}</td>
-                                    </tr>";
-                            }
-                          } else {
-                            echo "<tr><td colspan='8' class='text-center text-danger'>No Record Found!</td></tr>";
-                          }
-                          ?>
+                          <?php if (isset($attendanceRecords) && count($attendanceRecords) > 0): ?>
+                            <?php foreach ($attendanceRecords as $i => $record): ?>
+                              <tr>
+                                <td><?= $i + 1 ?></td>
+                                <td><?= $record['firstName'] ?></td>
+                                <td><?= $record['lastName'] ?></td>
+                                <td><?= $record['otherName'] ?></td>
+                                <td><?= $record['admissionNumber'] ?></td>
+                                <td><?= $record['className'] ?></td>
+                                <td><?= $record['status'] == '1' ? 'Present' : 'Absent' ?></td>
+                                <td><?= $record['dateTimeTaken'] ?></td>
+                              </tr>
+                            <?php endforeach; ?>
+                          <?php else: ?>
+                            <tr>
+                              <td colspan="8" class="text-center">No Attendance Records Found</td>
+                            </tr>
+                          <?php endif; ?>
                         </tbody>
                       </table>
                     </div>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
-        <?php include "Includes/footer.php";?>
+
       </div>
+      <?php include "Includes/footer.php";?>
     </div>
-
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="js/ruang-admin.min.js"></script>
-    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <script>
-      $(document).ready(function () {
-        $('#dataTableHover').DataTable();
-      });
-    </script>
-  </body>
+  </div>
+</body>
 </html>
