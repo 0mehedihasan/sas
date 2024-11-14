@@ -1,6 +1,24 @@
 # School Attendance Management System
 
 A distributed database-based School Attendance Management System designed to manage school attendance records efficiently. This project is built using PHP, HTML, CSS, and JavaScript and operates on multiple databases for scalability and organization.
+## Access Details
+
+### Class Teacher
+- **Username**: `class@six`
+- **Password**: `pass123`
+
+### Student
+- **Admission Number**: `20240001`
+- **Password**: `12345`
+
+## Getting Started
+1. Visit [http://sas.000.pe/](http://sas.000.pe/).
+2. Use the login credentials provided above based on your role.
+3. For teachers: log in to manage and update attendance records.
+4. For students: log in to view attendance records.
+
+## About
+This project is hosted on **InfinityFree**, a free hosting platform, and provides essential functionalities for school attendance tracking.
 - Project Proposal:
 [View SAS Project Proposal PDF](https://github.com/0mehedihasan/sas/raw/main/Proposal%2CSlides%2CReports/SAS%20project%20proposal.pdf)
 ## Features
