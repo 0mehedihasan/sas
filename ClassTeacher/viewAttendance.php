@@ -42,16 +42,6 @@ foreach ($dbs as $dbKey) {
   }
 }
 
-//session and Term
-$sessionTermId = null;
-foreach ($dbs as $dbKey) {
-  $query = $conn[$dbKey]->query("SELECT * FROM tblsessionterm WHERE isActive ='1'");
-  if ($query && $query->num_rows > 0) {
-    $rwws = $query->fetch_assoc();
-    $sessionTermId = $rwws['Id'];
-    break;
-  }
-}
 
 $dateTaken = date("Y-m-d");
 
@@ -74,8 +64,8 @@ if ($classId) {
     $query = "SELECT * FROM tblstudents WHERE classId = '$classId'";
     $qus = $conn[$dbKey]->query($query);
     while ($ros = $qus->fetch_assoc()) {
-      $query = "INSERT INTO tblattendance(admissionNo, classId, sessionTermId, status, dateTimeTaken) 
-                VALUES('".$ros['admissionNumber']."', '$classId', '$sessionTermId', '0', '$dateTaken')";
+      $query = "INSERT INTO tblattendance(admissionNo, classId, status, dateTimeTaken) 
+                VALUES('".$ros['admissionNumber']."', '$classId', '0', '$dateTaken')";
       $conn[$dbKey]->query($query);
     }
   }
