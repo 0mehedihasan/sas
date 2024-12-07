@@ -13,7 +13,8 @@ $allClasses = [];
 $databases = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
 
 foreach ($databases as $dbKey) {
-  $query = "SELECT c.*, ca.classArmName, ca.isAssigned FROM tblclass c LEFT JOIN tblclassarms ca ON c.Id = ca.classId";
+  // Update the query to exclude the classarms table and its fields
+  $query = "SELECT c.* FROM tblclass c";
   $result = $conn[$dbKey]->query($query);
 
   while ($row = $result->fetch_assoc()) {
