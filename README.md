@@ -260,3 +260,12 @@ Here are some screenshots of the system in action:
 
 ### XAMPP & MySQL Workbench Clash <br>
 Solution: https://www.youtube.com/watch?v=gxYpitQmais&t=502s&ab_channel=FahimAmin
+
+
+<div align="center">
+
+**⭐️ Don't forget to star this repository if you find it useful!**
+
+[![Star History Chart](https://api.star-history.com/svg?repos=/0mehedihasan/sas/)](https://star-history.com/0mehedihasan/sas/)
+
+</div>
