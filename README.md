@@ -183,7 +183,7 @@ The application establishes connections to all databases at startup and dynamica
    Edit `Includes/dbcon.php` and update the connection parameters to match your local environment:
 
    ```php
-   $host = "localhost";  // or "localhost:3306" depending on your setup
+   $host = "localhost";  // append ":PORT" if MySQL runs on a non-default port (e.g. "localhost:3306")
    $user = "root";
    $pass = "";           // your MySQL password
    ```
