@@ -1,271 +1,299 @@
-# School Attendance Management System
+<div align="center">
 
-A distributed database-based School Attendance Management System designed to manage school attendance records efficiently. This project is built using PHP, HTML, CSS, and JavaScript and operates on multiple databases for scalability and organization.
-## Access Details
+# 🎓 School Attendance System (SAS)
 
-### Class Teacher
-- **Username**: `class@six`
-- **Password**: `pass123`
+**A role-based school attendance management system with a distributed database architecture.**
 
-### Student
-- **Admission Number**: `20240001`
-- **Password**: `12345`
+Built with PHP · MySQL · Bootstrap 4
 
-## Getting Started
-1. Visit [http://sas.000.pe/](http://sas.000.pe/).
-2. Use the login credentials provided above based on your role.
-3. For teachers: log in to manage and update attendance records.
-4. For students: log in to view attendance records.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.txt)
+[![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![MySQL](https://img.shields.io/badge/MySQL-10.4%2B-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 
-## About
-This project is hosted on **InfinityFree**, a free hosting platform, and provides essential functionalities for school attendance tracking.
-- Project Proposal:
-[View SAS Project Proposal PDF](https://github.com/0mehedihasan/sas/raw/main/Proposal%2CSlides%2CReports/SAS%20project%20proposal.pdf)
+![Login Page](snap/login.PNG)
+
+</div>
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Database Schema](#database-schema)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Overview
+
+SAS (School Attendance System) is a web-based application that enables schools to manage attendance records through role-based dashboards for **administrators**, **class teachers**, and **students**. The system uses a distributed database architecture — data is partitioned across multiple MySQL databases by grade level — to demonstrate scalable data management.
+
 ## Features
 
-- **Admin Panel**:
-  - Create, update, edit, and delete records for classes, teachers, and students.
-- **Teacher Panel**:
-  - View class student lists.
-  - Take daily attendance.
-  - View attendance records.
-  - View Specific Student all attendance records.
-  - Download daily attendance records in Excel format.
-- **Student Panel**:
-  - View attendance records.
-  - Download all attendance records in Excel format.
-  - View personal information.
-- **Distributed Databases**:
-  - Utilizes multiple databases (`sas_six`, `sas_seven`, `sas_eight`, `sas_other`) based on the grade level, allowing data separation and scalability.
+### Admin Panel
+- Dashboard with school-wide statistics (classes, teachers, students)
+- Full CRUD operations for classes, class arms, teachers, and students
+- Academic session and term management
+- User account creation and management
+
+### Class Teacher Panel
+- View roster of students in the assigned class
+- Record daily attendance with one-click mark present/absent
+- View class-wide and individual student attendance history
+- Export attendance records to Excel (.xls)
+
+### Student Panel
+- View personal profile and class information
+- View personal attendance history
+- Download attendance records as Excel files
+
+### System
+- Role-based authentication (Admin, Teacher, Student)
+- Session management with protected routes
+- Distributed database architecture across 4 MySQL databases
+- Responsive UI built with Bootstrap 4 and DataTables
+
+## Screenshots
+
+<details>
+<summary><strong>Admin Panel</strong></summary>
+
+| Dashboard | Create Class |
+|:---------:|:------------:|
+| ![Admin Dashboard](snap/admindashboard.PNG) | ![Create Class](snap/admincreateclass.PNG) |
+
+| Create Teacher | Create Student |
+|:--------------:|:--------------:|
+| ![Create Teacher](snap/admincreateteacher.PNG) | ![Create Student](snap/admincreatestudent.PNG) |
+
+</details>
+
+<details>
+<summary><strong>Teacher Panel</strong></summary>
+
+| Dashboard | Student List |
+|:---------:|:------------:|
+| ![Teacher Dashboard](snap/teacherdasboard.PNG) | ![Student List](snap/teacherstudentview.PNG) |
+
+| Take Attendance | View Attendance |
+|:---------------:|:---------------:|
+| ![Take Attendance](snap/takeattendance.PNG) | ![View Attendance](snap/viewattendance.PNG) |
+
+| Individual Student Record | Download Report |
+|:-------------------------:|:---------------:|
+| ![Student Record](snap/specificstudentview.PNG) | ![Download](snap/viewattendancefile.PNG) |
+
+</details>
+
+<details>
+<summary><strong>Student Panel</strong></summary>
+
+| Dashboard | View Attendance | Download Report |
+|:---------:|:---------------:|:---------------:|
+| ![Student Dashboard](snap/studentdashboard.PNG) | ![View Attendance](snap/studentviewattendance.PNG) | ![Download](snap/studentattendancefile.PNG) |
+
+</details>
 
 ## Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: PHP
-- **Database**: MySQL (via XAMPP)
-- **Local Server**: XAMPP
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | HTML5, CSS3, JavaScript, [Bootstrap 4](https://getbootstrap.com/), [jQuery](https://jquery.com/), [DataTables](https://datatables.net/), [Font Awesome 5](https://fontawesome.com/) |
+| **Backend** | PHP 8.2+ |
+| **Database** | MySQL 10.4+ (MariaDB) |
+| **Server** | Apache (via [XAMPP](https://www.apachefriends.org/)) |
 
-## Distributed Database Management System (DDBMS)
-### ER Diagram 
-![ER Diagram](https://github.com/0mehedihasan/sas/blob/main/Proposal%2CSlides%2CReports/ERdiagram.png)
+## Architecture
 
-### Diagram
-![Distributed Database Management System Diagram](https://github.com/0mehedihasan/sas/blob/main/Proposal%2CSlides%2CReports/ddbms.drawio.png)
-- This image contains an overview of a **Distributed Database Management System (DDBMS)** for a **Student Attendance System**. The DDBMS is designed to manage and partition data access for different classes, teachers, students, and administrators within a school setting.
-### Architecture Overview
-The DDBMS architecture is structured as follows:
-#### 1. Central Database
-- A single, centralized database where all data is stored.
-- Accessible by the **Student Attendance System (SAS)**, which manages attendance records and user access across different classes.
-- **Note:** Originally, the system was designed with a single, centralized database where all data would be stored and accessed by the Student Attendance System (SAS) for managing attendance records and user access across different classes. However, for enhanced efficiency and scalability, a distributed database architecture was implemented instead of a centralized one. This approach allows for better load distribution, faster data retrieval, and greater fault tolerance across the system.
-#### 2. Student Attendance System (SAS)
-- The main interface connecting teachers, students, and administrators with their relevant attendance data.
-- Ensures partitioned access to the database, allowing each class to only access its specific data subset.
-#### 3. Class-Specific Partitioned Databases
-The database is partitioned based on class to enhance data security and control:
-- **sas_six**: 
-  - Accessible only by Class 6 teachers, students, and administrators.
-  - Contains data specific to Class 6.
-- **sas_seven**:
-  - Accessible only by Class 7 teachers, students, and administrators.
-  - Contains data specific to Class 7.
-- **sas_eight**:
-  - Accessible only by Class 8 teachers, students, and administrators.
-  - Contains data specific to Class 8.
-#### 4. General Database (sas_other)
-- **sas_other**: A single database accessible by all classes **except Classes 6, 7, and 8**.
-- Allows access to teachers, students, and administrators across these other classes.
-### Data Access Control
-- Each partitioned database is restricted to its respective class, providing enhanced data security by isolating access based on user role and class.
-- The **sas_other** database is used as a consolidated resource for classes outside of Class 6, Class 7, and Class 8.
-### Summary:
-- This DDBMS setup improves data efficiency and security by ensuring that each segment of users can only access the data they are authorized to see. The structure allows the school to manage attendance records more effectively, with tailored access for each class.
----
+SAS uses a **Distributed Database Management System (DDBMS)** architecture. Instead of a single database, data is partitioned by grade level across four MySQL databases:
+
+| Database | Scope |
+|----------|-------|
+| `sas_six` | Class 6 data |
+| `sas_seven` | Class 7 data |
+| `sas_eight` | Class 8 data |
+| `sas_other` | All other classes |
+
+The application establishes connections to all databases at startup and dynamically routes queries to the correct database based on the logged-in user's class assignment.
+
+<details>
+<summary><strong>ER Diagram</strong></summary>
+
+![ER Diagram](Proposal,Slides,Reports/ERdiagram.png)
+
+</details>
+
+<details>
+<summary><strong>DDBMS Architecture Diagram</strong></summary>
+
+![DDBMS Architecture](Proposal,Slides,Reports/ddbms.drawio.png)
+
+</details>
+
+> **Design Note:** The distributed architecture was chosen over a single centralized database to demonstrate load distribution, data isolation per grade, and improved fault tolerance.
+
+## Getting Started
+
+### Prerequisites
+
+- [XAMPP](https://www.apachefriends.org/) (Apache + MySQL/MariaDB + PHP 8.2+)
+- A modern web browser
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/0mehedihasan/sas.git
+   ```
+
+2. **Move the project into your XAMPP web root**
+
+   ```bash
+   # Example for default XAMPP installation
+   cp -r sas /path/to/xampp/htdocs/sas
+   ```
+
+3. **Create the databases**
+
+   Open phpMyAdmin (`http://localhost/phpmyadmin`) and create four databases:
+   - `sas_six`
+   - `sas_seven`
+   - `sas_eight`
+   - `sas_other`
+
+4. **Import the SQL schema files**
+
+   Import each SQL file from the `DATABASE FILE/` directory into its corresponding database:
+
+   | File | Database |
+   |------|----------|
+   | `sas_six.sql` | `sas_six` |
+   | `sas_seven.sql` | `sas_seven` |
+   | `sas_eight.sql` | `sas_eight` |
+   | `sas_other.sql` | `sas_other` |
+
+5. **Configure the database connection**
+
+   Edit `Includes/dbcon.php` and update the connection parameters to match your local environment:
+
+   ```php
+   $host = "localhost";  // or "localhost:3306" depending on your setup
+   $user = "root";
+   $pass = "";           // your MySQL password
+   ```
+
+6. **Start XAMPP** (Apache and MySQL services) and visit:
+
+   ```
+   http://localhost/sas/
+   ```
+
+### Demo Credentials
+
+The imported SQL files include sample data with the following demo accounts:
+
+| Role | Login Field | Username / ID | Password |
+|------|-------------|---------------|----------|
+| Admin | Email | `super@admin` | `admin` |
+| Teacher | Email | `class@six` | `pass123` |
+| Student | Admission No. | `20240001` | `12345` |
 
 ## Project Structure
 
-The main project files are stored in the `htdocs` folder of XAMPP, and the system connects to the correct database depending on the login credentials.
-
-## Multi-Database Setup
-
-### How It Works
-
-The project is designed to handle multiple databases to manage different grade levels separately. This approach helps in organizing data efficiently and allows for better scalability. Here’s how it works:
-
-1. **Database Connections**:
-   - The project defines multiple databases (`sas_six`, `sas_seven`, `sas_eight`, `sas_other`) for different grade levels.
-   - Each database connection is established at the beginning of the script using a loop that iterates through the list of databases.
-
-2. **Dynamic Database Selection**:
-   - Depending on the class or grade level, the system dynamically selects the appropriate database connection.
-   - For example, when creating a new class or taking attendance, the system determines which database to use based on the class name or other criteria.
-
-3. **Session Management**:
-   - User sessions are managed to ensure that the correct database is accessed based on the logged-in user's role and class assignment.
-   - The session variables store user information, including the user ID and class ID, which are used to fetch data from the correct database.
-
-4. **Data Fetching and Insertion**:
-   - Queries are executed on the selected database connection to fetch or insert data.
-   - For example, when a teacher logs in, the system fetches the class information from the appropriate database based on the teacher's assigned class.
-
-## Example Code Snippet
-Here's the dbcon.php code:
-```php
-<?php
-// dbcon.php
-
-// Database connection parameters
-$host = "localhost:5222"; // Hostname with port number
-$user = "root";           // Database username
-$pass = "";               // Database password (empty in this case)
-
-// List of database names to connect to
-$dbs = [
-    "sas_six",
-    "sas_seven",
-    "sas_eight",
-    "sas_other"
-];
-
-// Array to hold the database connections
-$conn = [];
-
-// Create a connection for each database
-foreach ($dbs as $dbName) {
-    // Attempt to create a new database connection for the current database
-    $dbConnection = new mysqli($host, $user, $pass, $dbName);
-    
-    // Check if the connection was successful
-    if ($dbConnection->connect_error) {
-        // If there is a connection error, stop the script and show an error message
-        die("Connection failed for $dbName: " . $dbConnection->connect_error);
-    }
-
-    // If the connection is successful, store it in the $conn array with the database name as the key
-    $conn[$dbName] = $dbConnection;
-}
-
-// At this point, $conn array holds active connections to each specified database
-?>
 ```
-**Explanation of Comments Added:**
-- **Database Parameters**: Explains the purpose of each variable (`$host`, `$user`, `$pass`, and `$dbs`).
-- **Connection Array**: Indicates that `$conn` is used to store the database connections.
-- **Loop & Connection Creation**: Details the purpose of the `foreach` loop and the connection creation for each database.
-- **Error Handling**: Describes the `if` statement that checks for connection errors and the `die()` function to stop the script if an error occurs.
-- **Successful Connection Storage**: Notes that the connection is stored in `$conn` only if it is successful.
-
-Here’s an example of how the project dynamically selects the database connection:
-This code connects to multiple databases, checks if there is a record for a class teacher's `classId` based on the current `userId` from the session, and retrieves the associated `className`. 
-```php
-<?php
-// Define the database connection variables
-$host = 'localhost:5222'; // Hostname with port for the database server
-$user = 'root';           // Username for database access
-$pass = '';               // Password for database access (empty in this case)
-
-// Define the list of databases to connect to
-$dbs = ['sas_six', 'sas_seven', 'sas_eight', 'sas_other'];
-
-// Initialize an empty array to store the database connections
-$conn = [];
-
-// Establish a connection to each database in the $dbs array
-foreach ($dbs as $db) {
-  // Create a new connection for each database and store it in the $conn array
-  $conn[$db] = new mysqli($host, $user, $pass, $db);
-
-  // Check if the connection was successful
-  if ($conn[$db]->connect_error) {
-    // If there is an error, stop the script and display an error message
-    die("Connection failed for $db: " . $conn[$db]->connect_error);
-  }
-}
-
-// Prepare an empty array to hold the fetched class data
-$rrw = ['className' => ''];
-$classId = null; // Variable to store the classId once found
-
-// Loop through each database to execute the query
-foreach ($dbs as $dbKey) {
-  // SQL query to fetch class name and class ID where the class teacher matches the current user ID from the session
-  $query = "SELECT tblclass.className, tblclassteacher.classId 
-            FROM tblclassteacher
-            INNER JOIN tblclass ON tblclass.Id = tblclassteacher.classId
-            WHERE tblclassteacher.Id = '".$_SESSION['userId']."'";
-
-  // Execute the query on the current database connection
-  $rs = $conn[$dbKey]->query($query);
-
-  // Check if the query was successful and returned any rows
-  if ($rs && $rs->num_rows > 0) {
-    // Fetch the result as an associative array
-    $rrw = $rs->fetch_assoc();
-    // Store the class ID from the result
-    $classId = $rrw['classId'];
-    // Break out of the loop once data is found
-    break;
-  }
-}
-
-// At this point, $rrw contains the class name and $classId holds the class ID for the class teacher if found
-?>
+sas/
+├── index.php                  # Login page (application entry point)
+├── Includes/
+│   ├── dbcon.php              # Multi-database connection handler
+│   └── session.php            # Session validation
+├── Admin/                     # Administrator panel
+│   ├── index.php              # Admin dashboard
+│   ├── createClass.php        # Manage classes
+│   ├── createClassTeacher.php # Manage teachers
+│   ├── createStudents.php     # Manage students
+│   ├── createUsers.php        # Manage user accounts
+│   ├── createSessionTerm.php  # Manage sessions/terms
+│   ├── createClassArms.php    # Manage class arms
+│   └── Includes/              # Admin layout partials (sidebar, topbar, footer)
+├── ClassTeacher/              # Teacher panel
+│   ├── index.php              # Teacher dashboard
+│   ├── takeAttendance.php     # Record attendance
+│   ├── viewAttendance.php     # View class attendance
+│   ├── viewStudents.php       # View student roster
+│   ├── viewStudentAttendance.php # Individual student records
+│   ├── downloadRecord.php     # Export to Excel
+│   └── Includes/              # Teacher layout partials
+├── Student/                   # Student panel
+│   ├── index.php              # Student dashboard
+│   ├── viewAttendance.php     # View personal attendance
+│   ├── downloadRecord.php     # Export records
+│   └── Includes/              # Student layout partials
+├── DATABASE FILE/             # SQL schema and sample data
+│   ├── sas_six.sql
+│   ├── sas_seven.sql
+│   ├── sas_eight.sql
+│   └── sas_other.sql
+├── vendor/                    # Frontend libraries (Bootstrap, jQuery, DataTables, Font Awesome)
+├── css/                       # Global stylesheets
+├── js/                        # Global scripts
+├── scss/                      # SCSS source files
+├── font/                      # Web fonts (Nunito)
+├── img/                       # Images and logos
+├── snap/                      # Application screenshots
+├── Proposal,Slides,Reports/   # Project documentation (proposal, slides, ER diagrams)
+└── LICENSE.txt                # MIT License
 ```
-**Explanation of Comments Added**:
-- **Database Parameters**: Clear explanations for each variable involved in the database connection (`$host`, `$user`, `$pass`, and `$dbs`).
-- **Connection Array**: Explains the purpose of `$conn` to hold connections to each database.
-- **Loop & Connection Creation**: Details the logic of creating a database connection for each database and checking for errors.
-- **Class Data Retrieval**: Comments guide through the query execution for fetching the `className` and `classId` for the teacher's class from each database.
-- **Loop Break**: Explains that the loop stops after the class data is found, improving efficiency by avoiding unnecessary queries on remaining databases.
 
-# Output Screenshots
-Here are some screenshots of the system in action:
-## Login Page:
-- Login Page
-![Login Panel](https://github.com/0mehedihasan/sas/blob/main/snap/login.PNG)
-## Admin Panel:
-- Admin Dashboard
-![Admin Panel](https://github.com/0mehedihasan/sas/blob/main/snap/admindashboard.PNG)
-- Admin Create Class
-![Admin Create Class](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateclass.PNG)
-- Admin Create Teacher
-![Admin Create Class teacher](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateteacher.PNG)
-![Admin Create Class teache](https://github.com/0mehedihasan/sas/blob/main/snap/admincreateteacher1.PNG)
-- Admin Create Student
-![Admin Create Student](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent.PNG)
-![Admin Create Student1](https://github.com/0mehedihasan/sas/blob/main/snap/admincreatestudent1.PNG)
-## Teacher Panel:
-- Teacher Dashboard
-![Teacher Dashboard](https://github.com/0mehedihasan/sas/blob/main/snap/teacherdasboard.PNG)
-- View Student List
-![View Student List](https://github.com/0mehedihasan/sas/blob/main/snap/teacherstudentview.PNG)
-- Take Attendance
-![Take Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/takeattendance.PNG)
-![Take Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/takeattendance1.PNG)
-- View Attendance
-![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/viewattendance.PNG)
-- View Specific student Attendance
-![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/specificstudentview.PNG)
-- Download Attendance
-![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/viewattendancefile.PNG)
+## Database Schema
 
-## Student Panel:
-- Student Dashboard
-![Student Dashboard](https://github.com/0mehedihasan/sas/blob/main/snap/studentdashboard.PNG)
-- View Attendance
-![View Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/studentviewattendance.PNG)
-- Download Attendance
-![Download Attendance](https://github.com/0mehedihasan/sas/blob/main/snap/studentattendancefile.PNG)
+Each of the four databases shares the same schema with these core tables:
 
+| Table | Description |
+|-------|-------------|
+| `tbladmin` | Administrator accounts |
+| `tblclass` | Class/grade definitions |
+| `tblclassarms` | Class arm/section divisions |
+| `tblclassteacher` | Teacher accounts and class assignments |
+| `tblstudents` | Student profiles with admission numbers |
+| `tblattendance` | Daily attendance records (status + timestamp) |
+| `tblsessionterm` | Academic session and term configuration |
+| `tblterm` | Term definitions |
 
-### XAMPP & MySQL Workbench Clash <br>
-Solution: https://www.youtube.com/watch?v=gxYpitQmais&t=502s&ab_channel=FahimAmin
+## Contributing
 
+Contributions are welcome! Here's how you can help:
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/your-feature`)
+3. **Commit** your changes (`git commit -m 'Add some feature'`)
+4. **Push** to your branch (`git push origin feature/your-feature`)
+5. **Open** a Pull Request
+
+### Areas for Contribution
+
+- 🔒 **Security** — Password hashing, prepared statements, input validation
+- 🏗️ **Architecture** — MVC refactoring, environment-based configuration
+- 🐳 **DevOps** — Docker setup, CI/CD pipeline
+- ✅ **Testing** — Automated test suite
+- 📱 **UI/UX** — Mobile responsiveness improvements
+- 📖 **Documentation** — API docs, inline code documentation
+
+## License
+
+This project is licensed under the **MIT License** — see the [LICENSE.txt](LICENSE.txt) file for details.
+
+---
 
 <div align="center">
 
-**⭐️ Don't forget to star this repository if you find it useful!**
+**⭐ If you find this project useful, please consider giving it a star!**
 
-[![Star History Chart](https://api.star-history.com/svg?repos=/0mehedihasan/sas/)](https://star-history.com/0mehedihasan/sas/)
+Made with ❤️ by [Md. Mehedi Hasan](https://github.com/0mehedihasan)
 
 </div>
